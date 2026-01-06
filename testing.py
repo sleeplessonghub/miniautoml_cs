@@ -41,4 +41,4 @@ else:
   st.info('Link a shared Google Drive file of the requested format to begin the analysis', icon = 'ℹ️')
 
 if df_pp:
-  st.write(df_pp.head())
+  st.write(df_pp)
