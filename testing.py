@@ -42,3 +42,5 @@ else:
 if df_pp is not None:
   st.write('### Data Preview')
   st.dataframe(df_pp.head())
+else:
+  st.write('### No file upload detected')
