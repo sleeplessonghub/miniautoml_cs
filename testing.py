@@ -8,7 +8,7 @@ import gdown
 st.title('Mini AutoML (Cross-Sectional) v1.0')
 st.header('Upload a file for analysis using one of the two methods shown below:')
 
-df_pp = pd.DataFrame()
+df_pp = None
 
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
 if uploaded_file:
