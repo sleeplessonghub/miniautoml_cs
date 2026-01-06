@@ -6,6 +6,7 @@ import seaborn as sns
 import gdown
 
 st.title('Mini AutoML (Cross-Sectional) v1.0')
+st.header('Upload a file for analysis using of the two method shown below:')
 
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
 if uploaded_file:
@@ -21,8 +22,8 @@ else:
 
 st.write('OR')
 
-file_id = st.text_input('Input shared Google Drive file ID')
-file_name = st.text_input('Input shared Google Drive file name')
+file_id = st.text_input('Input shared Google Drive file ID (e.g. 1Fq32N3GU...)')
+file_name = st.text_input("Input shared Google Drive file name (including '.csv'/'.xlsx' extension)")
 if file_id != '' and file_name != '':
   if st.button('Download shared file'):
     file_url = f'https://drive.google.com/uc?id={file_id}'
@@ -36,3 +37,6 @@ if file_id != '' and file_name != '':
       st.error("Uploaded file format must be in either '.csv' or '.xlsx'")
 else:
   st.info('Link a shared file to begin the analysis', icon = 'ℹ️')
+
+if df_pp:
+  st.write(df_pp.head())
