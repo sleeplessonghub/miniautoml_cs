@@ -3,21 +3,35 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import gdown
 
-st.title('Mini AutoML (Cross-Sectional) v1.0 - Streamlit')
+st.title('Mini AutoML (Cross-Sectional) v1.0')
 
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
-
 if uploaded_file is not None:
   try:
     if uploaded_file.name.endswith('.csv'):
       df_pp = pd.read_csv(uploaded_file)
     elif uploaded_file.name.endswith('.xlsx'):
       df_pp = pd.read_excel(uploaded_file)
-
-    st.write(df_pp)
-
-  except Exception as e:
-    st.error(f"Error: {e}")
+  except:
+    st.error("Uploaded file format must be in either '.csv' or '.xlsx'")
 else:
   st.info('Upload a file to begin the analysis', icon = 'ℹ️')
+
+st.write('OR')
+
+file_id = st.number_input('Input shared Google Drive file ID')
+file_name = st.text_input('Input shared Google Drive file name')
+if file_id is not None and file_name is not None:
+  file_url = f'https://drive.google.com/uc?id={file_id}'
+  uploaded_file = gdown.download(file_url, file_name, quiet = True)
+  try:
+    if uploaded_file.name.endswith('.csv'):
+      df_pp = pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith('.xlsx'):
+      df_pp = pd.read_excel(uploaded_file)
+  except:
+    st.error("Uploaded file format must be in either '.csv' or '.xlsx'")
+else:
+  st.info('Link a shared file to begin analysis', icon = 'ℹ️')
