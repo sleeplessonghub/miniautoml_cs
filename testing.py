@@ -40,7 +40,21 @@ else:
   st.info('Link a shared Google Drive file of the requested format to begin the analysis', icon = 'ℹ️')
 
 if df_pp is not None:
+  
+  initial_columns = [col for col in df_pp.columns]
+  for col in initial_columns:
+    if col.startswith('Unnamed:') or len(df_pp) == df_pp[col].isna().sum() or df_pp[col].nunique() == 1:
+      df_pp.drop(col, axis = 1, inplace = True)
+
+  initial_columns = [col for col in df_pp.columns]
+  for col in initial_columns:
+    if df_pp[col].dtypes == object:
+      df_pp[col] = df_pp[col].str.strip()
+    if col != col.strip():
+      df_pp = df_pp.rename(columns = {col: col.strip()})
+
   st.write('### Data Preview')
   st.dataframe(df_pp.head())
 else:
   st.write('### No file upload detected')
+  
