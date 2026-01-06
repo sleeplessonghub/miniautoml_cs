@@ -6,7 +6,6 @@ import seaborn as sns
 import gdown
 
 st.title('Mini AutoML (Cross-Sectional) v1.0')
-st.header('Upload a file for analysis using one of the two methods shown below:')
 
 df_pp = None
 
@@ -40,5 +39,6 @@ if file_id != '' and file_name != '':
 else:
   st.info('Link a shared Google Drive file of the requested format to begin the analysis', icon = 'ℹ️')
 
-if df_pp:
-  st.write(df_pp)
+if df_pp is not None:
+  st.write('### Data Preview')
+  st.dataframe(df_pp.head())
