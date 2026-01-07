@@ -78,21 +78,21 @@ if st.session_state['df_pp'] is not None:
   st.subheader('---- SETUP ----')
   st.write('✅ — Dataset upload and conversion to pandas dataframe complete!')
   st.write('✅ — Dataset unusable column and white space cleaning complete!')
-  st.write(f'{file_name_ref} Data Preview:')
-  st.dataframe(df_pp.sample(30))
+  st.write(f'{file_name_ref} Preview:')
+  st.dataframe(df_pp.head())
   st.write(f'⋯ {len(df_pp)} initial rows for analysis!')
-  st.write(tw.dedent(
-      """
-      Specify column data type!
-      
-      * Specify 'Nominal' for classification target variable
-      * Apply 'Identification' labeling only to a single column
-      """
-  ).strip())
   col_names = [col for col in df_pp.columns]
   col_types = []
   id_count = 0
   with st.form('data_type_specification_form'):
+    st.write(tw.dedent(
+        """
+        Specify column data type!
+
+        * Specify 'Nominal' for classification target variable
+        * Apply 'Identification' labeling only to a single column
+        """
+    ).strip())
     for col in col_names:
       data_type = st.selectbox(f"'{col}' column data type is:", ('Identification', 'Float', 'Integer', 'Ordinal', 'Nominal', 'Drop'), accept_new_options = False)
       if data_type == 'Identification':
