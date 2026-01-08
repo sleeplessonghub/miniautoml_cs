@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import gdown
 import textwrap as tw
 from sklearn.model_selection import train_test_split
 
@@ -95,7 +94,7 @@ if st.session_state['df_pp'] is not None:
 
   if submitted_ref == True:
     if unassigned_count > 0:
-      st.error("Detected at least 1 column without data type specification", icon = '🛑')
+      st.error('Detected at least 1 column without data type specification', icon = '🛑')
       submitted_ref = False
     elif id_count >= 2:
       st.error("'Identification' label has been assigned to 2 or more columns", icon = '🛑')
@@ -122,7 +121,7 @@ if st.session_state['df_pp'] is not None:
           col_drop_list.append(col_names[index])
       if col_drop_list:
         st.write('✅ — ID duplicated values removal and targeted column dropping complete!')
-        st.write(f"⋯ {len(df_pp)} rows left post-duplicate cleaning and unused column dropping!")
+        st.write(f'⋯ {len(df_pp)} rows left post-duplicate cleaning and unused column dropping!')
 
       # 'col_names'/'col_types' parallel lists' items update
       for col in col_drop_list:
@@ -141,6 +140,141 @@ if st.session_state['df_pp'] is not None:
       st.write('✅ — Train-test split with a ratio of 70:30 complete!')
       st.write(f'⋯ {len(train)} rows left for training set post-train/test split!')
       st.write(f'⋯ {len(test)} rows left for testing set post-train/test split!')
+
+      # Dataset cell missingness handling
+      placeholder = 9898989898 # Placeholder value, extremely unlikely to naturally occur in real-world datasets
+      df_pp_rows_w_nan = df_pp.isna().any(axis = 1).sum()
+      percent_missing = df_pp_rows_w_nan / len(df_pp)
+      central_tend_dict = dict()
+
+      if percent_missing <= 0.05:
+
+        train.dropna(inplace = True)
+        for index, value in enumerate(col_types):
+          if value == 'Float':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            train[col_names[index]] = train[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            train[col_names[index]] = train[col_names[index]].replace('', placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(float)
+            central_tend_dict[col_names[index]] = train[col_names[index]].median()
+            if placeholder in train[col_names[index]].values:
+              train[col_names[index]] = train[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Integer':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            train[col_names[index]] = train[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            train[col_names[index]] = train[col_names[index]].replace('', placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(float)
+            train[col_names[index]] = train[col_names[index]].astype(int)
+            central_tend_dict[col_names[index]] = int(train[col_names[index]].median())
+            if placeholder in train[col_names[index]].values:
+              train[col_names[index]] = train[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Ordinal':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            central_tend_dict[col_names[index]] = train[col_names[index]].mode()[0]
+            train[col_names[index]] = train[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+          elif value == 'Nominal':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            central_tend_dict[col_names[index]] = train[col_names[index]].mode()[0]
+            train[col_names[index]] = train[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+        
+        test.dropna(inplace = True)
+        for index, value in enumerate(col_types):
+          if value == 'Float':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            test[col_names[index]] = test[col_names[index]].replace('', placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(float)
+            if placeholder in test[col_names[index]].values:
+              test[col_names[index]] = test[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Integer':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            test[col_names[index]] = test[col_names[index]].replace('', placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(float)
+            test[col_names[index]] = test[col_names[index]].astype(int)
+            if placeholder in test[col_names[index]].values:
+              test[col_names[index]] = test[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Ordinal':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+          elif value == 'Nominal':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+      
+      else:
+
+        for index, value in enumerate(col_types):
+          if value == 'Float':
+            train[col_names[index]] = train[col_names[index]].fillna(placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            train[col_names[index]] = train[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            train[col_names[index]] = train[col_names[index]].replace('', placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(float)
+            central_tend_dict[col_names[index]] = train[col_names[index]].median()
+            if placeholder in train[col_names[index]].values:
+              train[col_names[index]] = train[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Integer':
+            train[col_names[index]] = train[col_names[index]].fillna(placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            train[col_names[index]] = train[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            train[col_names[index]] = train[col_names[index]].replace('', placeholder)
+            train[col_names[index]] = train[col_names[index]].astype(float)
+            train[col_names[index]] = train[col_names[index]].astype(int)
+            central_tend_dict[col_names[index]] = int(train[col_names[index]].median())
+            if placeholder in train[col_names[index]].values:
+              train[col_names[index]] = train[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Ordinal':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            central_tend_dict[col_names[index]] = train[col_names[index]].mode()[0]
+            train[col_names[index]] = train[col_names[index]].fillna(train[col_names[index]].mode()[0])
+            train[col_names[index]] = train[col_names[index]].replace('', train[col_names[index]].mode()[0])
+          elif value == 'Nominal':
+            train[col_names[index]] = train[col_names[index]].astype(str)
+            central_tend_dict[col_names[index]] = train[col_names[index]].mode()[0]
+            train[col_names[index]] = train[col_names[index]].fillna(train[col_names[index]].mode()[0])
+            train[col_names[index]] = train[col_names[index]].replace('', train[col_names[index]].mode()[0])
+        
+        for index, value in enumerate(col_types):
+          if value == 'Float':
+            test[col_names[index]] = test[col_names[index]].fillna(placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            test[col_names[index]] = test[col_names[index]].replace('', placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(float)
+            if placeholder in test[col_names[index]].values:
+              test[col_names[index]] = test[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Integer':
+            test[col_names[index]] = test[col_names[index]].fillna(placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].str.replace(r'[^\d.-]', '', regex = True)
+            test[col_names[index]] = test[col_names[index]].replace('', placeholder)
+            test[col_names[index]] = test[col_names[index]].astype(float)
+            test[col_names[index]] = test[col_names[index]].astype(int)
+            if placeholder in test[col_names[index]].values:
+              test[col_names[index]] = test[col_names[index]].replace(placeholder, central_tend_dict.get(col_names[index]))
+          elif value == 'Ordinal':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].fillna(central_tend_dict.get(col_names[index]))
+            test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+          elif value == 'Nominal':
+            test[col_names[index]] = test[col_names[index]].astype(str)
+            test[col_names[index]] = test[col_names[index]].fillna(central_tend_dict.get(col_names[index]))
+            test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
+      
+      train.reset_index(drop = True, inplace = True)
+      test.reset_index(drop = True, inplace = True)
+      if percent_missing > 0:
+        st.write('✅ — Dataset missingness handling complete!')
+        if percent_missing > 0.2:
+          st.warning(f'Warning: large missingness detected, imputed missingness rows make up {percent_missing * 100:.2f}% of total rows', icon = '⚠️')
+          st.write(f'⋯ {len(train)} rows left for training set post-missingness handling!')
+          st.write(f'⋯ {len(test)} rows left for training set post-missingness handling!')
+      
+      # Numerical list preparation for outlier handling
+      col_names_num = []
+      for index, value in enumerate(col_types):
+        if value == 'Float' or value == 'Integer':
+          col_names_num.append(col_names[index])
 
       # Test output
       st.dataframe(train.head())
