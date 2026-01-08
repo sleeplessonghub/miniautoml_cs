@@ -33,29 +33,6 @@ if uploaded_file:
 else:
   st.info('Upload a file of the requested format from local to begin the analysis', icon = 'ℹ️')
 
-st.write('OR')
-
-file_id = st.text_input('Input shared Google Drive file ID (e.g. 1Fq32N3GU...)')
-file_name = st.text_input("Input shared Google Drive file name (including '.csv'/'.xlsx' extension)")
-if file_id and file_name:
-  if st.button('Download shared file'):
-    file_url = f'https://drive.google.com/uc?id={file_id}'
-    try:
-      uploaded_file = gdown.download(file_url, file_name, quiet = True)
-      try:
-        if file_name.endswith('.csv'):
-          st.session_state['df_pp'] = pd.read_csv(uploaded_file)
-          st.session_state['file_name_ref'] = file_name
-        elif file_name.endswith('.xlsx'):
-          st.session_state['df_pp'] = pd.read_excel(uploaded_file)
-          st.session_state['file_name_ref'] = file_name
-      except:
-        st.error("Uploaded file format must be in either '.csv' or '.xlsx'", icon = '🛑')
-    except:
-      st.error('Potential invalid file ID/name, file potentially not given share access', icon = '🛑')
-else:
-  st.info('Link a shared Google Drive file of the requested format to begin the analysis', icon = 'ℹ️')
-
 # Guarded execution block (layer 1)
 if st.session_state['df_pp'] is not None:
 
@@ -113,7 +90,7 @@ if st.session_state['df_pp'] is not None:
   if submitted == True:
     submitted_ref = st.session_state['submitted_ref'] = True
   else:
-    submitted_ref = st.session_state['submitted_ref']
+    submitted_ref = st.session_state['submitted_ref'] = False
   
   if submitted_ref == True:
     if unassigned_count > 0:
