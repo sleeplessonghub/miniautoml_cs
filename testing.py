@@ -322,7 +322,7 @@ if st.session_state['df_pp'] is not None:
             """
         ).strip())
         target_options = ['-'] + train.columns.tolist()
-        target = st.selectbox('Select a target variable:', (target_options), label_visibility = 'hidden', accept_new_options = False)
+        target = st.selectbox('Select a target variable:', (target_options), accept_new_options = False)
         if target == '-':
           unassigned_count_2 = unassigned_count_2 + 1
         if target != '-':
@@ -335,7 +335,7 @@ if st.session_state['df_pp'] is not None:
             if target_class == '-':
               unassigned_count_2 = unassigned_count_2 + 1
             is_object = True
-        submitted_2 = st.form_submit_button('Confirm target assignment')
+        submitted_2 = st.form_submit_button('Confirm target variable/class assignment')
       
       if submitted_2 == True:
         submitted_2_ref = st.session_state['submitted_2_ref'] = True
