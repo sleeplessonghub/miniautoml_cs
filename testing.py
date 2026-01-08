@@ -58,7 +58,7 @@ if st.session_state['df_pp'] is not None:
   st.subheader('---- SETUP ----')
   st.write('✅ — Dataset upload and conversion to pandas dataframe complete!')
   st.write('✅ — Dataset unusable column and white space cleaning complete!')
-  st.write(f'{file_name_ref} Preview:')
+  st.write('Dataset Preview:')
   st.dataframe(df_pp.head())
   st.write(f'⋯ {len(df_pp)} initial rows for analysis!')
   if 'col_names' not in st.session_state:
