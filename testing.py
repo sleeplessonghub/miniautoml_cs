@@ -88,7 +88,7 @@ if st.session_state['df_pp'] is not None:
   if submitted == True:
     submitted_ref = st.session_state['submitted_ref'] = True
   else:
-    submitted_ref = st.session_state['submitted_ref'] = False
+    submitted_ref = st.session_state['submitted_ref']
 
   if submitted_ref == True:
     if unassigned_count > 0:
