@@ -29,7 +29,7 @@ if uploaded_file:
       st.session_state['file_name_ref'] = uploaded_file.name
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'", icon = '🛑')
-  st.warning('⚠️ Warning: do not delete uploaded file during the analysis')
+  st.warning('Warning: do not delete uploaded file during the analysis', icon - '⚠️')
 else:
   st.info('Upload a file of the requested format from local to begin the analysis', icon = 'ℹ️')
 
