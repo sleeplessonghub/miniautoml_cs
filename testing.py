@@ -16,7 +16,7 @@ if 'df_pp' not in st.session_state:
 if 'file_name_ref' not in st.session_state:
   st.session_state['file_name_ref'] = None
 if 'submitted_ref' not in st.session_state:
-  st.session_state['submitted_ref'] = False
+  st.session_state['submitted_ref'] = None
 
 # Dataset upload and conversion to a pandas dataframe
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
@@ -30,6 +30,7 @@ if uploaded_file:
       st.session_state['file_name_ref'] = uploaded_file.name
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'", icon = '🛑')
+  st.warning('Warning: do not delete the uploaded file during the analysis', icon = '⚠️')
 else:
   st.info('Upload a file of the requested format from local to begin the analysis', icon = 'ℹ️')
 
@@ -45,7 +46,7 @@ if st.session_state['df_pp'] is not None:
   for col in original_columns:
     if col.startswith('Unnamed:') or len(df_pp) == df_pp[col].isna().sum() or df_pp[col].nunique() == 1:
       df_pp.drop(col, axis = 1, inplace = True)
-  
+
   # Dataset column name/object values leading/trailing white space cleaning
   original_columns_2 = [col for col in df_pp.columns]
   for col in original_columns_2:
@@ -53,7 +54,7 @@ if st.session_state['df_pp'] is not None:
       df_pp[col] = df_pp[col].str.strip()
     if col != col.strip():
       df_pp.rename(columns = {col: col.strip()}, inplace = True)
-  
+
   # Dataset's variable type specification setup
   st.subheader('---- SETUP ----')
   st.write('✅ — Dataset upload and conversion to pandas dataframe complete!')
@@ -91,7 +92,7 @@ if st.session_state['df_pp'] is not None:
     submitted_ref = st.session_state['submitted_ref'] = True
   else:
     submitted_ref = st.session_state['submitted_ref'] = False
-  
+
   if submitted_ref == True:
     if unassigned_count > 0:
       st.error("Detected at least 1 column without data type specification", icon = '🛑')
@@ -107,7 +108,7 @@ if st.session_state['df_pp'] is not None:
         df_pp = df_pp.sample(n = 20000, random_state = 42, ignore_index = True)
         st.write('✅ — Large population size random sampling complete!')
         st.write(f'⋯ {len(df_pp)} rows left post-random sampling!')
-      
+
       # Duplicate filtering and irrelevant column dropping
       col_drop_list = []
       for index, value in enumerate(col_types):
@@ -122,11 +123,11 @@ if st.session_state['df_pp'] is not None:
       if col_drop_list:
         st.write('✅ — ID duplicated values removal and targeted column dropping complete!')
         st.write(f"⋯ {len(df_pp)} rows left post-duplicate cleaning and unused column dropping!")
-      
+
       # 'col_names'/'col_types' parallel lists' items update
       for col in col_drop_list:
         col_names.remove(col)
-      
+
       while 'Identification' in col_types:
         col_types.remove('Identification')
       while 'Drop' in col_types:
