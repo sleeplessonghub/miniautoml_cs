@@ -84,6 +84,7 @@ if st.session_state['df_pp'] is not None:
   col_names = [col for col in df_pp.columns]
   col_types = []
   id_count = 0
+  unassigned_count = 0
   with st.form('data_type_specification_form'):
     st.write(tw.dedent(
         """
@@ -94,13 +95,17 @@ if st.session_state['df_pp'] is not None:
         """
     ).strip())
     for col in col_names:
-      data_type = st.selectbox(f"'{col}' column data type is:", ('Identification', 'Float', 'Integer', 'Ordinal', 'Nominal', 'Drop'), accept_new_options = False)
+      data_type = st.selectbox(f"'{col}' column data type is:", ('-', 'Identification', 'Float', 'Integer', 'Ordinal', 'Nominal', 'Drop'), accept_new_options = False)
+      if data_type == '-':
+        unassigned_count = unassigned_count + 1
       if data_type == 'Identification':
         id_count = id_count + 1
       col_types.append(data_type)
     submitted = st.form_submit_button('Confirm type specification')
   if submitted:
-    if id_count >= 2:
+    if unassigned_count > 0:
+      st.error("Detected at least 1 column without data type specification", icon = '🛑')
+    elif id_count >= 2:
       st.error("'Identification' label has been assigned to 2 or more columns", icon = '🛑')
     else:
       st.write('✅ — Dataset variable type specification complete!') # Guarded execution block (layer 2)
