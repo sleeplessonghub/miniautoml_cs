@@ -319,7 +319,7 @@ if st.session_state['df_pp'] is not None:
             * User must select a class 1 label for the chosen categorical target variable's classes
             """
         ).strip())
-        target = st.selectbox((train.columns.tolist().insert(0, '-')), label_visibility = 'hidden', accept_new_option = False)
+        target = st.selectbox((train.columns.tolist().insert(0, '-')), label_visibility = 'hidden', accept_new_options = False)
         if target == '-':
           unassigned_count_2 = unassigned_count_2 + 1
         if train[target].dtypes == float or train[target].dtypes == int:
@@ -327,7 +327,7 @@ if st.session_state['df_pp'] is not None:
           submitted_2 = st.form_submit_button('Confirm target variable')
         elif train[target].dtypes == object:
           st.write(train[target].value_counts())
-          target_class = st.selectbox('Select a class 1 label:', (train[target].unique().tolist().insert(0, '-')), accept_new_option = False)
+          target_class = st.selectbox('Select a class 1 label:', (train[target].unique().tolist().insert(0, '-')), accept_new_options = False)
           if target_class == '-':
             unassigned_count_2 = unassigned_count_2 + 1
           is_object = True
