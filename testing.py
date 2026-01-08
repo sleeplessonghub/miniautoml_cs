@@ -302,7 +302,7 @@ if st.session_state['df_pp'] is not None:
 
       # Target variable selection
       st.write('Select a target variable for machine learning from the list of available variables:')
-      train_info = pd.DataFrame({'Column': train.columns, 'Non-Null Count': train.count(numeric_only = False), 'Data Type': train.dtypes})
+      train_info = pd.DataFrame({'Column': train.columns, 'Non-Null Count': train.count(numeric_only = False), 'Data Type': train.dtypes}).reset_index(drop = True)
       st.dataframe(train_info)
       with st.form('target_variable_selection_form'):
         st.write(tw.dedent(
