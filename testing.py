@@ -613,8 +613,9 @@ if st.session_state['df_pp'] is not None:
             # Classification report
             st.text(tw.dedent(
                 f'''
-                > Models Used
-                • Linear Model — Logistic Regression
+                **> Models Used**
+                
+                * Linear Model — Logistic Regression
                 • Tree-Based Model — Decision Tree Classifier (DT)
                 • Ensemble Model — Extreme Gradient Boosting Classifier (XGB)
 
