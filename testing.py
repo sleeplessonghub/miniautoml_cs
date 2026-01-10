@@ -641,17 +641,17 @@ if st.session_state['df_pp'] is not None:
 
             st.write('---- Classification Reports (Test Set Predictions)')
             st.write('• Logistic Regression:')
-            st.text(logit_metrics)
+            st.code(logit_metrics, language = None, width = 'content')
             st.write('• Logistic Regression (Undersampled):')
-            st.text(logit_rs_metrics)
+            st.code(logit_rs_metrics, language = None, width = 'content')
             st.write('• DT Classifier:')
-            st.text(dt_class_metrics)
+            st.code(dt_class_metrics, language = None, width = 'content')
             st.write('• DT Classifier (Undersampled):')
-            st.text(dt_class_rs_metrics)
+            st.code(dt_class_rs_metrics, language = None, width = 'content')
             st.write('• XGB Classifier:')
-            st.text(xgb_class_metrics)
+            st.code(xgb_class_metrics, language = None, width = 'content')
             st.write('• XGB Classifier (Undersampled):')
-            st.text(xgb_class_rs_metrics)
+            st.code(xgb_class_rs_metrics, language = None, width = 'content')
 
           # E
 
