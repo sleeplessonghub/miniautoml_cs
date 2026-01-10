@@ -445,7 +445,7 @@ if st.session_state['df_pp'] is not None:
             undersampler = RandomUnderSampler(random_state = 42)
             feature_train_balanced, target_train_balanced = undersampler.fit_resample(feature_train, target_train)
             resampled = True
-            st.write('✅ — Undersampling for imbalance target complete!')
+            st.write('✅ — Undersampling for imbalanced target complete!')
             st.write(f'⋯ {len(feature_train_balanced)} rows left for feature (train-balanced) set post-undersampling!')
             st.write(f'⋯ {len(target_train_balanced)} rows left for target (train-balanced) set post-undersampling!')
           else:
