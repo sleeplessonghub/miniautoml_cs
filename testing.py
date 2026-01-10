@@ -61,7 +61,7 @@ if st.session_state['df_pp'] is not None:
       df_pp.rename(columns = {col: col.strip()}, inplace = True)
 
   # Dataset variable type specification
-  st.subheader('⸻ Setup Wizard 🪄')
+  st.header('⸻ Setup Wizard 🪄')
   st.write('✅ — Dataset upload and conversion to a pandas dataframe complete!')
   st.write('✅ — Dataset unusable column and white space cleaning complete!')
   st.write('Dataset Preview:')
@@ -485,7 +485,7 @@ if st.session_state['df_pp'] is not None:
 
           # Executing machine learning algorithms and evaluation metrics
           st.divider()
-          st.subheader('⸻ Machine Learning 📊')
+          st.header('⸻ Machine Learning 📊')
 
           if is_object == False: # Regression modeling
 
@@ -546,10 +546,10 @@ if st.session_state['df_pp'] is not None:
 
                 > Model Fit Evaluation Metrics (Test Set Predictions)
 
-                ---- Coefficient of Determination (R2 Score - Unit: Percentage (%))
-                • Linear Regression - R2 Score: {r2_ln * 100:.4f}%
-                • DT Regressor - R2 Score: {r2_dt_reg * 100:.4f}%
-                • XGB Regressor - R2 Score: {r2_xgb_reg * 100:.4f}%
+                ---- Coefficient of Determination (R2 Score - Unit: Percentage)
+                • Linear Regression - R2 Score: {r2_ln * 100:.2f}%
+                • DT Regressor - R2 Score: {r2_dt_reg * 100:.2f}%
+                • XGB Regressor - R2 Score: {r2_xgb_reg * 100:.2f}%
 
                 ---- Root Mean Squared Error (RMSE - Unit: Z-Score)
                 • Linear Regression - RMSE: {rmse_ln:.4f}
@@ -561,10 +561,10 @@ if st.session_state['df_pp'] is not None:
                 • DT Regressor - MAE: {mae_dt_reg:.4f}
                 • XGB Regressor - MAE: {mae_xgb_reg:.4f}
 
-                ---- Mean Absolute Percentage Error (MAPE - Unit: Percentage (%))
-                • Linear Regression - MAPE: {mape_ln * 100:.4f}%
-                • DT Regressor - MAPE: {mape_dt_reg * 100:.4f}%
-                • XGB Regressor - MAPE: {mape_xgb_reg * 100:.4f}%
+                ---- Mean Absolute Percentage Error (MAPE - Unit: Percentage)
+                • Linear Regression - MAPE: {mape_ln * 100:.2f}%
+                • DT Regressor - MAPE: {mape_dt_reg * 100:.2f}%
+                • XGB Regressor - MAPE: {mape_xgb_reg * 100:.2f}%
                 '''
             ).strip())
           
