@@ -5,7 +5,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import textwrap as tw
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import PowerTransformer
+from sklearn.preprocessing import PowerTransformer, OneHotEncoder, TargetEncoder, StandardScaler
+from imblearn.under_sampling import RandomUnderSampler
+from statsmodels.stats.outliers_influence import variance_inflation_factor as vif
+from statsmodels.tools.tools import add_constant
 
 # Title call
 st.title('Mini AutoML (Cross-Sectional) v1.0')
@@ -14,9 +17,9 @@ st.title('Mini AutoML (Cross-Sectional) v1.0')
 if 'df_pp' not in st.session_state:
   st.session_state['df_pp'] = None # Layer 1 check
 if 'submitted_ref' not in st.session_state:
-  st.session_state['submitted_ref'] = None # Layer 2 check
+  st.session_state['submitted_ref'] = False # Layer 2 check
 if 'submitted_2_ref' not in st.session_state:
-  st.session_state['submitted_2_ref'] = None # Layer 3 check
+  st.session_state['submitted_2_ref'] = False # Layer 3 check
 
 # Dataset upload and conversion to a pandas dataframe
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
@@ -340,18 +343,136 @@ if st.session_state['df_pp'] is not None:
       if submitted_2 == True:
         submitted_2_ref = st.session_state['submitted_2_ref'] = True
       else:
-        submitted_2_ref = st.session_state['submitted_2_ref'] = False
+        submitted_2_ref = st.session_state['submitted_2_ref']
       
       if submitted_2_ref == True:
         if unassigned_count_2 > 0:
-          st.error('Detected target variable/class dropdown without selection!', icon = '🛑')
+          st.error('Detected target variable/class without dropdown selection!', icon = '🛑')
         else:
           st.write('✅ — Target variable assignment complete!') # Guarded execution block (layer 3)
 
+          # One-vs-Rest (OVR) binary encoding for categorical target
+          if is_object == True:
+            train[f'{target}_{target_class}'] = [x if x == target_class else 0 for x in train[target]]
+            test[f'{target}_{target_class}'] = [x if x == target_class else 0 for x in test[target]]
+            train[f'{target}_{target_class}'] = train[f'{target}_{target_class}'].map({target_class: 1, 0: 0})
+            test[f'{target}_{target_class}'] = test[f'{target}_{target_class}'].map({target_class: 1, 0: 0})
+            train = train.drop(target, axis = 1)
+            test = test.drop(target, axis = 1)
+            target_encoded = f'{target}_{target_class}'
+            idx = col_names.index(target)
+            del col_names[idx]
+            del col_types[idx] # 'col_names'/'col_types' lists are no longer in use for manipulation past this line as they're no longer parallel
+            st.write('✅ — Categorical target binary encoding complete!')
+          
+          # Single cardinality categorical variables cleaning
+          col_names_2 = [col for col in train.columns]
+          for col in col_names_2:
+            if train[col].dtypes == object and train[col].nunique() == 1:
+              train.drop(col, axis = 1, inplace = True)
+              test.drop(col, axis = 1, inplace = True)
+          col_names_2 = [col for col in train.columns]
+          
+          # One Hot Encoding (OHE) for low cardinality categorical features
+          col_names_lc = []
+          for col in col_names_2:
+            if train[col].dtypes == object and train[col].nunique() <= 5:
+              col_names_lc.append(col)
+          oh_encoder = OneHotEncoder(drop = 'first', sparse_output = False, dtype = int, handle_unknown = 'ignore')
+          oh_encoded_train = oh_encoder.fit_transform(train[col_names_lc])
+          oh_encoded_test = oh_encoder.transform(test[col_names_lc])
+          oh_encoded_train_df = pd.DataFrame(oh_encoded_train, columns = oh_encoder.get_feature_names_out(col_names_lc))
+          oh_encoded_test_df = pd.DataFrame(oh_encoded_test, columns = oh_encoder.get_feature_names_out(col_names_lc))
+          train = pd.concat([train, oh_encoded_train_df], axis = 1)
+          test = pd.concat([test, oh_encoded_test_df], axis = 1)
+          train.drop(col_names_lc, axis = 1, inplace = True)
+          test.drop(col_names_lc, axis = 1, inplace = True)
+          if col_names_lc:
+            st.write('✅ — One hot encoding complete!')
+          
+          # Target encoding for high cardinality categorical features
+          col_names_2 = [col for col in train.columns]
+          col_names_hc = []
+          for col in col_names_2:
+            if train[col].dtypes == object and train[col].nunique() > 5:
+              col_names_hc.append(col)
+          if is_object == False:
+            t_encoder = TargetEncoder(target_type = 'continuous', smooth = 'auto', random_state = 42)
+          elif is_object == True:
+            t_encoder = TargetEncoder(target_type = 'binary', smooth = 'auto', random_state = 42)
+          for col in col_names_hc:
+            train[col] = t_encoder.fit_transform(train[[col]], train[[target_encoded if is_object == True else target]]).flatten()
+            test[col] = t_encoder.transform(test[[col]]).flatten()
+          
+          train.reset_index(drop = True, inplace = True)
+          test.reset_index(drop = True, inplace = True)
+          st.write('✅ — Target encoding complete!')
+
+          # Feature/target split
+          dep_var = target_encoded if is_object == True else target # Fuck it -> tired of checking condition everytime target is called
+          feature_train = train.drop(columns = dep_var)
+          target_train = train[[dep_var]]
+          feature_test = test.drop(columns = dep_var)
+          target_test = test[[dep_var]]
+          st.write('✅ — Feature/target split complete!')
+          st.write(f'⋯ {len(feature_train)} rows left for feature (train) set post-feature/target split!')
+          st.write(f'⋯ {len(target_train)} rows left for target (train) set post-feature/target split!')
+          st.write(f'⋯ {len(feature_test)} rows left for feature (test) set post-feature/target split!')
+          st.write(f'⋯ {len(target_test)} rows left for target (test) set post-feature/target split!')
+
+          # Z-score standardization of numerical variables
+          scaler = StandardScaler()
+          if dep_var not in col_names_num and is_object == False:
+            col_names_num.append(dep_var)
+          for col in col_names_hc:
+            col_names_num.append(col)
+          
+          for col in col_names_num:
+            if col == dep_var:
+              target_train[col] = scaler.fit_transform(target_train[[col]]).flatten()
+              target_test[col] = scaler.transform(target_test[[col]]).flatten()
+            else:
+              feature_train[col] = scaler.fit_transform(feature_train[[col]]).flatten()
+              feature_test[col] = scaler.transform(feature_test[[col]]).flatten()
+          if col_names_num:
+            st.write('✅ — Z-score standardization complete!')
+          
+          # Undersampling to handle imbalanced categorical target
+          if is_object == True:
+            undersampler = RandomUnderSampler(random_state = 42)
+            feature_train_balanced, target_train_balanced = undersampler.fit_resample(feature_train, target_train)
+            resampled = True
+            st.write('✅ — Undersampling for imbalance target complete!')
+            st.write(f'⋯ {len(feature_train_balanced)} rows left for feature (train-balanced) set post-undersampling!')
+            st.write(f'⋯ {len(target_train_balanced)} rows left for target (train-balanced) set post-undersampling!')
+          else:
+            resampled = False
+          
+          # Variance Inflation Factor (VIF) check for multicollinearity
+          if dep_var in col_names_num and is_object == False:
+            col_names_num.remove(dep_var)
+          
+          vif_df_switch = False
+          if len(col_names_num) > 1:
+            intercept = add_constant(feature_train[col_names_num])
+            vif_df = pd.DataFrame([vif(intercept.values, x) for x in range(intercept.shape[1])], index = intercept.columns).reset_index()
+            vif_df.columns = ['Features', 'VIF Score']
+            vif_df = vif_df.loc[vif_df.Features != 'const']
+            vif_df = vif_df.sort_values(by = 'VIF Score', ascending = False)
+            vif_df = vif_df.reset_index(drop = True)
+            vif_df_switch = True
+          
+          if vif_df_switch == True:
+            vif_df = vif_df[vif_df['VIF Score'] >= 5]
+            col_names_num_vif = [x for x in vif_df['Features']]
+            feature_train.drop(columns = col_names_num_vif, inplace = True)
+            feature_test.drop(columns = col_names_num_vif, inplace = True)
+            if resampled == True:
+              feature_train_balanced.drop(columns = col_names_num_vif, inplace = True)
+            st.write('✅ — VIF multicollinearity diagnostic complete!')
+
           # Test output
           st.dataframe(train.head())
-          st.write(col_names)
-          st.write(col_types)
 
 else:
   st.subheader('No file upload detected')
