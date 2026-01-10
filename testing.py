@@ -611,11 +611,11 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — Extreme gradient boosting classifier (undersampled) fitted!')
 
             # Classification report
-            st.markdown(tw.dedent(
+            st.text(tw.dedent(
                 f'''
-                **> Models Used**
+                > Models Used
                 
-                * Linear Model — Logistic Regression
+                • Linear Model — Logistic Regression
                 • Tree-Based Model — Decision Tree Classifier (DT)
                 • Ensemble Model — Extreme Gradient Boosting Classifier (XGB)
 
