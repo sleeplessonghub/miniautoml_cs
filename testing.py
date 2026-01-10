@@ -53,7 +53,7 @@ if st.session_state['df_pp'] is not None:
       df_pp.rename(columns = {col: col.strip()}, inplace = True)
 
   # Dataset variable type specification
-  st.subheader('⸺ Setup Wizard 🪄')
+  st.subheader('⸻ Setup Wizard 🪄')
   st.write('✅ — Dataset upload and conversion to a pandas dataframe complete!')
   st.write('✅ — Dataset unusable column and white space cleaning complete!')
   st.write('Dataset Preview:')
