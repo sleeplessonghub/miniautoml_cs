@@ -472,7 +472,8 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — VIF multicollinearity diagnostic complete!')
 
           # Test output
-          st.dataframe(train.head())
+          st.dataframe(feature_train.head())
+          st.dataframe(target_train.head())
 
 else:
   st.subheader('No file upload detected')
