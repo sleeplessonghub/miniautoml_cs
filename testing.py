@@ -485,7 +485,7 @@ if st.session_state['df_pp'] is not None:
 
           # Executing machine learning algorithms and evaluation metrics
           st.divider()
-          st.subheader('⸻ Machine Learning 🤖')
+          st.subheader('⸻ Machine Learning 📊')
 
           if is_object == False: # Regression modeling
 
@@ -520,7 +520,7 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — Extreme gradient boosting regressor fitted!')
 
             # Regression report
-            st.write(tw.dedent(
+            st.text(tw.dedent(
                 f'''
                 > Models Used
 
@@ -611,7 +611,7 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — Extreme gradient boosting classifier (undersampled) fitted!')
 
             # Classification report
-            st.write(tw.dedent(
+            st.text(tw.dedent(
                 f'''
                 > Models Used
 
@@ -641,21 +641,19 @@ if st.session_state['df_pp'] is not None:
 
             st.write('---- Classification Reports (Test Set Predictions)')
             st.write('• Logistic Regression:')
-            st.write(logit_metrics)
+            st.code(logit_metrics, language = None)
             st.write('• Logistic Regression (Undersampled):')
-            st.write(logit_rs_metrics)
+            st.code(logit_rs_metrics, language = None)
             st.write('• DT Classifier:')
-            st.write(dt_class_metrics)
+            st.code(dt_class_metrics, language = None)
             st.write('• DT Classifier (Undersampled):')
-            st.write(dt_class_rs_metrics)
+            st.code(dt_class_rs_metrics, language = None)
             st.write('• XGB Classifier:')
-            st.write(xgb_class_metrics)
+            st.code(xgb_class_metrics, language = None)
             st.write('• XGB Classifier (Undersampled):')
-            st.write(xgb_class_rs_metrics)
+            st.code(xgb_class_rs_metrics, language = None)
 
-          # Test output
-          st.dataframe(feature_train.head())
-          st.dataframe(target_train.head())
+          # E
 
 else:
   st.subheader('No file upload detected')
