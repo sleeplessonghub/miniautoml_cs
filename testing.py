@@ -513,7 +513,7 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — Decision tree regressor fitted!')
 
             # Ensemble model, extreme gradient boosting regressor
-            xgb_reg = xgb.XGBRegressor(n_jobs = -1, random_state = 42)
+            xgb_reg = xgb.XGBRegressor(tree_method = 'hist', n_jobs = -1, random_state = 42)
             xgb_reg.fit(feature_train, target_train)
             xgb_reg_pred = xgb_reg.predict(feature_test)
             r2_xgb_reg = r2_score(target_test, xgb_reg_pred)
@@ -602,14 +602,14 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — Decision tree classifier (undersampled) fitted!')
 
             # Ensemble model, extreme gradient boosting classifier
-            xgb_class = xgb.XGBClassifier(n_jobs = -1, random_state = 42)
+            xgb_class = xgb.XGBClassifier(tree_method = 'hist', n_jobs = -1, random_state = 42)
             xgb_class.fit(feature_train, target_train)
             xgb_class_pred = xgb_class.predict(feature_test)
             xgb_class_metrics = classification_report(target_test, xgb_class_pred)
             st.write('✅ — Extreme gradient boosting classifier fitted!')
 
             # Ensemble model, extreme gradient boosting classifier (resampled)
-            xgb_class_rs = xgb.XGBClassifier(n_jobs = -1, random_state = 42)
+            xgb_class_rs = xgb.XGBClassifier(tree_method = 'hist', n_jobs = -1, random_state = 42)
             xgb_class_rs.fit(feature_train_balanced, target_train_balanced)
             xgb_class_rs_pred = xgb_class_rs.predict(feature_test)
             xgb_class_rs_metrics = classification_report(target_test, xgb_class_rs_pred)
