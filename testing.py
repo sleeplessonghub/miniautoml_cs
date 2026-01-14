@@ -625,7 +625,7 @@ if st.session_state['df_pp'] is not None:
                                                                                     'x': 0.05,
                                                                                     'y': 0.95,
                                                                                     'xanchor': 'left',
-                                                                                    'yanchor': 'right'
+                                                                                    'yanchor': 'top'
                                                                                 })
             st.plotly_chart(pfi_fig_ss, width = 'stretch', config = {'displayModeBar': False})
 
