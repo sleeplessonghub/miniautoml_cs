@@ -34,10 +34,10 @@ if uploaded_file:
   try:
     if uploaded_file.name.endswith('.csv'):
       st.session_state['df_pp'] = pd.read_csv(uploaded_file)
-      file_name = st.session_state['file_name'] = upload_file.name # To be used for new data check for ML (.csv)
+      file_name = st.session_state['file_name'] = uploaded_file.name # To be used for new data check for ML (.csv)
     elif uploaded_file.name.endswith('.xlsx'):
       st.session_state['df_pp'] = pd.read_excel(uploaded_file)
-      file_name = st.session_state['file_name'] = upload_file.name # To be used for new data check for ML (.xlsx)
+      file_name = st.session_state['file_name'] = uploaded_file.name # To be used for new data check for ML (.xlsx)
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'!", icon = '🛑')
   st.warning('Do not delete the uploaded file during analysis!', icon = '🚧')
@@ -498,7 +498,7 @@ if st.session_state['df_pp'] is not None:
 
             # New data check
             if 'file_name_check' not in st.session_state:
-              file_name_check = None
+              st.session_state['file_name_check'] = None
 
             # Linear model, linear regression
             if file_name_check != file_name:
@@ -514,7 +514,7 @@ if st.session_state['df_pp'] is not None:
               st.write('✅ — Linear regression fitted!')
 
             # Tree-based model, decision tree regressor
-            if file_name_checl != file_name:
+            if file_name_check != file_name:
               dt_reg = DecisionTreeRegressor(random_state = 42)
               dt_reg.fit(feature_train, target_train)
               dt_reg_pred = dt_reg.predict(feature_test)
@@ -527,7 +527,7 @@ if st.session_state['df_pp'] is not None:
               st.write('✅ — Decision tree regressor fitted!')
 
             # Ensemble model, light gradient boosting machine regressor
-            if file_name_change != file_name:
+            if file_name_check != file_name:
               lgbm_reg = lgbm.LGBMRegressor(random_state = 42, n_jobs = -1)
               lgbm_reg.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
               lgbm_reg_pred = lgbm_reg.predict(feature_test)
