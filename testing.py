@@ -626,7 +626,7 @@ if st.session_state['df_pp'] is not None:
             pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
             pdp_fig: go.Figure = pdp.plot(show = False, y_title = "") # 'y_title' was a bitch to find (hours!!!), had to dig through the dev's source code
             pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False,
-                                                                                height = 600 if len(feature_train.columns) >= 2 else None,
+                                                                                height = 600 if len(feature_train.columns) >= 3 else None,
                                                                                 width = None,
                                                                                 autosize = True,
                                                                                 title_x = 0.5,
