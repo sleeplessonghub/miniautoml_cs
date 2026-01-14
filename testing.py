@@ -14,11 +14,13 @@ from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 import lightgbm as lgbm
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, classification_report
+import dalex as dx
+import plotly.graph_objects as go
 
 # Title call
 st.title('Mini AutoML (Cross-Sectional) v1.0')
 
-# Session state initializations
+# Session state layer initializations
 if 'df_pp' not in st.session_state:
   st.session_state['df_pp'] = None # Layer 1 check
 if 'submitted_ref' not in st.session_state:
@@ -32,8 +34,10 @@ if uploaded_file:
   try:
     if uploaded_file.name.endswith('.csv'):
       st.session_state['df_pp'] = pd.read_csv(uploaded_file)
+      file_name = st.session_state['file_name'] = upload_file.name # To be used for new data check for ML (.csv)
     elif uploaded_file.name.endswith('.xlsx'):
       st.session_state['df_pp'] = pd.read_excel(uploaded_file)
+      file_name = st.session_state['file_name'] = upload_file.name # To be used for new data check for ML (.xlsx)
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'!", icon = '🛑')
   st.warning('Do not delete the uploaded file during analysis!', icon = '🚧')
@@ -492,35 +496,48 @@ if st.session_state['df_pp'] is not None:
 
           if is_object == False: # Regression modeling
 
+            # New data check
+            if 'file_name_check' not in st.session_state:
+              file_name_check = None
+
             # Linear model, linear regression
-            ln = LinearRegression()
-            ln.fit(feature_train, target_train)
-            ln_pred = ln.predict(feature_test)
-            r2_ln = r2_score(target_test, ln_pred)
-            rmse_ln = root_mean_squared_error(target_test, ln_pred)
-            mae_ln = mean_absolute_error(target_test, ln_pred)
-            mape_ln = mean_absolute_percentage_error(target_test, ln_pred)
-            st.write('✅ — Linear regression fitted!')
+            if file_name_check != file_name:
+              ln = LinearRegression()
+              ln.fit(feature_train, target_train)
+              ln_pred = ln.predict(feature_test)
+              r2_ln = st.session_state['r2_ln'] = r2_score(target_test, ln_pred)
+              rmse_ln = st.session_state['rmse_ln'] = root_mean_squared_error(target_test, ln_pred)
+              mae_ln = st.session_state['mae_ln'] = mean_absolute_error(target_test, ln_pred)
+              mape_ln = st.session_state['mape_ln'] = mean_absolute_percentage_error(target_test, ln_pred)
+              st.write('✅ — Linear regression fitted!')
+            elif file_name_check == file_name:
+              st.write('✅ — Linear regression fitted!')
 
             # Tree-based model, decision tree regressor
-            dt_reg = DecisionTreeRegressor(random_state = 42)
-            dt_reg.fit(feature_train, target_train)
-            dt_reg_pred = dt_reg.predict(feature_test)
-            r2_dt_reg = r2_score(target_test, dt_reg_pred)
-            rmse_dt_reg = root_mean_squared_error(target_test, dt_reg_pred)
-            mae_dt_reg = mean_absolute_error(target_test, dt_reg_pred)
-            mape_dt_reg = mean_absolute_percentage_error(target_test, dt_reg_pred)
-            st.write('✅ — Decision tree regressor fitted!')
+            if file_name_checl != file_name:
+              dt_reg = DecisionTreeRegressor(random_state = 42)
+              dt_reg.fit(feature_train, target_train)
+              dt_reg_pred = dt_reg.predict(feature_test)
+              r2_dt_reg = st.session_state['r2_dt_reg'] = r2_score(target_test, dt_reg_pred)
+              rmse_dt_reg = st.session_state['rmse_dt_reg'] = root_mean_squared_error(target_test, dt_reg_pred)
+              mae_dt_reg = st.session_state['mae_dt_reg'] = mean_absolute_error(target_test, dt_reg_pred)
+              mape_dt_reg = st.session_state['mape_dt_reg'] = mean_absolute_percentage_error(target_test, dt_reg_pred)
+              st.write('✅ — Decision tree regressor fitted!')
+            elif file_name_check == file_name:
+              st.write('✅ — Decision tree regressor fitted!')
 
             # Ensemble model, light gradient boosting machine regressor
-            lgbm_reg = lgbm.LGBMRegressor(random_state = 42, n_jobs = -1)
-            lgbm_reg.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 5)])
-            lgbm_reg_pred = lgbm_reg.predict(feature_test)
-            r2_lgbm_reg = r2_score(target_test, lgbm_reg_pred)
-            rmse_lgbm_reg = root_mean_squared_error(target_test, lgbm_reg_pred)
-            mae_lgbm_reg = mean_absolute_error(target_test, lgbm_reg_pred)
-            mape_lgbm_reg = mean_absolute_percentage_error(target_test, lgbm_reg_pred)
-            st.write('✅ — Light gradient boosting machine regressor fitted!')
+            if file_name_change != file_name:
+              lgbm_reg = lgbm.LGBMRegressor(random_state = 42, n_jobs = -1)
+              lgbm_reg.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
+              lgbm_reg_pred = lgbm_reg.predict(feature_test)
+              r2_lgbm_reg = st.session_state['r2_lgbm_reg'] = r2_score(target_test, lgbm_reg_pred)
+              rmse_lgbm_reg = st.session_state['rmse_lgbm_reg'] = root_mean_squared_error(target_test, lgbm_reg_pred)
+              mae_lgbm_reg = st.session_state['mae_lgbm_reg'] = mean_absolute_error(target_test, lgbm_reg_pred)
+              mape_lgbm_reg = st.session_state['mape_lgbm_reg'] = mean_absolute_percentage_error(target_test, lgbm_reg_pred)
+              st.write('✅ — Light gradient boosting machine regressor fitted!')
+            elif file_name_change == file_name:
+              st.write('✅ — Light gradient boosting machine regressor fitted!')
 
             # Regression report
             st.write('#### Output Statistics')
@@ -570,6 +587,37 @@ if st.session_state['df_pp'] is not None:
                 • LGBM Regressor - MAPE: {mape_lgbm_reg * 100:.2f}%
                 '''
             ).strip())
+
+            # Regression best model explainer (dalex)
+            model_names = ['XAI: Linear Regression', 'XAI: DT Regressor', 'XAI: LGBM Regressor']
+            model_fits = [ln, dt_reg, lgbm_reg]
+            model_rmses = [rmse_ln, rmse_dt_reg, rmse_lgbm_reg]
+
+            best_model_rmse = min(model_rmses)
+            best_model_fit = model_fits[model_rmses.index(best_model_rmse)]
+            best_model_name = model_names[model_fits.index(best_model_fit)]
+
+            best_model_explainer = dx.Explainer(best_model_fit, feature_train, target_train, label = best_model_name, verbose = False)
+
+            st.text(tw.dedent(
+                f'''
+                > Explainable Artificial Intelligence (XAI)
+
+                • Best Model - {best_model_name[5:]}
+                • Evaluation Metric for Determination of Best Model - Root Mean Squared Error (RMSE) (RMSE: {best_model_rmse:.4f})
+                • Loss Function - Root Mean Squared Error (RMSE)
+                '''
+            ).strip())
+
+            st.write('• Permutation Feature Importance (PFI):')
+            best_model_explainer_ss = st.session_state['best_model_explainer_ss'] = best_model_explainer.model_parts(random_state = 42).plot()
+            best_model_explainer_ss
+
+            st.write('• Partial Dependence Plots (PDPs):')
+            pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
+            pdp_fig: go.Figure = pdp.plot(show = False)
+            pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False, title_x = 0.5, margin = dict(l = 100))
+            st.plotly_chart(pdp_fig_ss)
           
           elif is_object == True: # Classification modeling
 
@@ -603,14 +651,14 @@ if st.session_state['df_pp'] is not None:
 
             # Ensemble model, light gradient boosting machine classifier
             lgbm_class = lgbm.LGBMClassifier(random_state = 42, n_jobs = -1)
-            lgbm_class.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 5)])
+            lgbm_class.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
             lgbm_class_pred = lgbm_class.predict(feature_test)
             lgbm_class_metrics = classification_report(target_test, lgbm_class_pred)
             st.write('✅ — Light gradient boosting machine classifier fitted!')
 
             # Ensemble model, light gradient boosting machine classifier (resampled)
             lgbm_class_rs = lgbm.LGBMClassifier(random_state = 42, n_jobs = -1)
-            lgbm_class_rs.fit(feature_train_balanced, target_train_balanced, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 5)])
+            lgbm_class_rs.fit(feature_train_balanced, target_train_balanced, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
             lgbm_class_rs_pred = lgbm_class_rs.predict(feature_test)
             lgbm_class_rs_metrics = classification_report(target_test, lgbm_class_rs_pred)
             st.write('✅ — Light gradient boosting machine classifier (undersampled) fitted!')
