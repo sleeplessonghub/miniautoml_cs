@@ -625,12 +625,10 @@ if st.session_state['df_pp'] is not None:
             st.write('• Partial Dependence Plots (PDPs):')
             pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
             pdp_fig: go.Figure = pdp.plot(show = False)
-            pdp_fig.update_yaxes(title_text = "")
-            pdp_fig.update_layout(yaxis_title = "", annotations = [])
             pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False,
                                                                                 height = 600,
                                                                                 width = None,
-                                                                                autosize = False,
+                                                                                autosize = True,
                                                                                 title_x = 0.5,
                                                                                 margin = dict(l = 50))
             st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
