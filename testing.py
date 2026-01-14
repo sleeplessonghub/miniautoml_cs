@@ -40,6 +40,7 @@ if uploaded_file:
       file_name = st.session_state['file_name'] = uploaded_file.name # To be used for new data check for ML (.xlsx)
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'!", icon = '🛑')
+    st.stop()
   st.warning('Do not delete the uploaded file during analysis!', icon = '🚧')
 else:
   st.info('Upload a file of the requested format from your device to begin the analysis!', icon = 'ℹ️')
