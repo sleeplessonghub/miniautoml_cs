@@ -611,7 +611,7 @@ if st.session_state['df_pp'] is not None:
 
             st.write('• Permutation Feature Importance (PFI):')
             best_model_explainer_ss = st.session_state['best_model_explainer_ss'] = best_model_explainer.model_parts(random_state = 42).plot()
-            best_model_explainer_ss
+            st.plotly_chart(best_model_explainer_ss)
 
             st.write('• Partial Dependence Plots (PDPs):')
             pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
