@@ -631,7 +631,7 @@ if st.session_state['df_pp'] is not None:
                                                                                 autosize = True,
                                                                                 title_x = 0.5,
                                                                                 margin = dict(l = 50),
-                                                                                hovermode = 'closest').update_traces(hovertemplate = '<b>X-Axis Value:</b> %{x:.4f}' + '<br><b>Avg. Target Z-Score:</b> %{y:.2f}<extra></extra>')
+                                                                                hovermode = 'unified').update_traces(hovertemplate = 'X-Axis Value: <b>%{x:.4f}</b>' + '<br>Avg. Target Z-Score: <b>%{y:.2f}</b><extra></extra>')
             st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
           
           elif is_object == True: # Classification modeling
