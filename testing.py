@@ -616,13 +616,13 @@ if st.session_state['df_pp'] is not None:
 
             st.write('• Permutation Feature Importance (PFI):')
             best_model_explainer_ss = st.session_state['best_model_explainer_ss'] = best_model_explainer.model_parts(random_state = 42).plot(show = False)
-            st.plotly_chart(best_model_explainer_ss)
+            st.plotly_chart(best_model_explainer_ss, use_container_width = True)
 
             st.write('• Partial Dependence Plots (PDPs):')
             pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
             pdp_fig: go.Figure = pdp.plot(show = False)
             pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False, title_x = 0.5, margin = dict(l = 100))
-            st.plotly_chart(pdp_fig_ss)
+            st.plotly_chart(pdp_fig_ss, use_container_width = True)
           
           elif is_object == True: # Classification modeling
 
