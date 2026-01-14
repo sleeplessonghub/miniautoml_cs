@@ -630,7 +630,7 @@ if st.session_state['df_pp'] is not None:
                                                                                 width = None,
                                                                                 autosize = False,
                                                                                 title_x = 0.5,
-                                                                                margin = dict(l = 50)).update_yaxes(title = None)
+                                                                                yaxis_title = None)
             st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
           
           elif is_object == True: # Classification modeling
