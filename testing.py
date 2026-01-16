@@ -652,7 +652,7 @@ if st.session_state['df_pp'] is not None:
               st.write('• Partial Dependence Plots (PDPs):')
               pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
               pdp_fig: go.Figure = pdp.plot(show = False, y_title = "") # 'y_title' was a bitch to find (took hours!!!), had to dig through the dev's source code
-              st.session_state['pdp_height'] = round(len(feature_train.columns) * 150) if len(feature_train.columns) >= 2 else 400
+              st.session_state['pdp_height'] = round(len(feature_train.columns) * 175) if len(feature_train.columns) >= 2 else 400
               pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False,
                                                                                   height = st.session_state['pdp_height'],
                                                                                   width = None,
@@ -668,7 +668,7 @@ if st.session_state['df_pp'] is not None:
 
             elif st.session_state['data_tracker_check'] == st.session_state['data_tracker']:
 
-              st.write(tw.dedent(
+              st.text(tw.dedent(
                   f'''
                   > Explainable Artificial Intelligence (XAI)
 
