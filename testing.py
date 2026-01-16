@@ -640,15 +640,16 @@ if st.session_state['df_pp'] is not None:
               st.write('• Partial Dependence Plots (PDPs):')
               pdp = best_model_explainer.model_profile(random_state = 42, verbose = False)
               pdp_fig: go.Figure = pdp.plot(show = False, y_title = "") # 'y_title' was a bitch to find (hours!!!), had to dig through the dev's source code
+              st.session_state['pdp_height'] = (len(feature_train.columns) + 1 // 2) * 375 if len(feature_train.columns) >= 2 else None
               pdp_fig_ss = st.session_state['pdp_fig_ss'] = pdp_fig.update_layout(showlegend = False,
-                                                                                  height = None if len(feature_train.columns) >= 3 else 375 if len(feature_train.columns) == 2 else None,
+                                                                                  height = st.session_state['pdp_height'],
                                                                                   width = None,
                                                                                   autosize = True,
                                                                                   title_x = 0.5,
                                                                                   margin = dict(l = 50),
                                                                                   hovermode = 'closest',
                                                                                   hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Z-Score Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
-              with st.container(height = 500, border = True):
+              with st.container(height = st.session_state['pdp_height'], border = True):
                 st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
 
               st.session_state['file_name_check'] = st.session_state['file_name'] # New file name update
