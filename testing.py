@@ -846,7 +846,7 @@ if st.session_state['df_pp'] is not None:
                                                                                   autosize = True,
                                                                                   title_font_size = 16,
                                                                                   font = dict(size = 11 if len(feature_train.columns) >= 6 else 13)).update_traces(hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left'),
-                                                                                                                                                                   hovertemplate = f'⤷ Loss after permutation: <b>%{x*100:.2f}%</b>' + f'<br>⤷ Drop-out loss change: <b>%{text*100:.2f}%</b>' + '<extra></extra>')
+                                                                                                                                                                   hovertemplate = '⤷ Loss after permutation: <b>%{x:.4f}</b>' + '<br>⤷ Drop-out loss change: <b>%{text}</b>' + '<extra></extra>')
               st.plotly_chart(pfi_fig_ss, width = 'stretch', config = {'displayModeBar': False})
 
               st.write('• Partial Dependence Plots (PDPs):')
@@ -860,7 +860,7 @@ if st.session_state['df_pp'] is not None:
                                                                                   title_x = 0.5,
                                                                                   margin = dict(l = 50),
                                                                                   hovermode = 'closest',
-                                                                                  hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + f'<br>⤷ Target Class 1 Proba. Pred.: <b>%{y*100:.2f}%</b>' + '<extra></extra>')
+                                                                                  hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Class 1 Proba. Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
               with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                 st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
               
