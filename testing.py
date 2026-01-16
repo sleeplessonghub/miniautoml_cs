@@ -83,6 +83,7 @@ if st.session_state['df_pp'] is not None:
   col_types = st.session_state['col_types'] = []
   id_count = 0
   unassigned_count = 0
+  valid_assigned_count = 0
   with st.form('data_type_specification_form'):
     st.write(tw.dedent(
         """
@@ -96,8 +97,10 @@ if st.session_state['df_pp'] is not None:
       data_type = st.selectbox(f"'{col}' column data type is:", ('-', 'Identification', 'Float', 'Integer', 'Ordinal', 'Nominal', 'Drop'), accept_new_options = False)
       if data_type == '-':
         unassigned_count = unassigned_count + 1
-      if data_type == 'Identification':
+      elif data_type == 'Identification':
         id_count = id_count + 1
+      elif data_type == 'Float' or data_type == 'Integer' or data_type == 'Ordinal' or data_type == 'Nominal':
+        valid_assigned_count = valid_assigned_count + 1
       col_types.append(data_type)
     submitted = st.form_submit_button('Confirm type specification')
 
@@ -112,6 +115,9 @@ if st.session_state['df_pp'] is not None:
       submitted_ref = False
     elif id_count >= 2:
       st.error("'Identification' label has been assigned to 2 or more columns!", icon = '🛑')
+      submitted_ref = False
+    elif valid_assigned_count < 2:
+      st.error('At least 2 columns must be labeled as non-ID and non-drop!', icon = '🛑')
       submitted_ref = False
     else:
       st.write('✅ — Dataset variable type specification complete!') # Guarded execution block (layer 2)
@@ -619,7 +625,9 @@ if st.session_state['df_pp'] is not None:
                                                                                 width = None,
                                                                                 autosize = True,
                                                                                 title_font_size = 16,
-                                                                                font = dict(size = 11 if len(feature_train.columns) >= 6 else 13))
+                                                                                font = dict(size = 11 if len(feature_train.columns) >= 6 else 13),
+                                                                                hovermode = 'closest',
+                                                                                hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ This is a sample template')
             st.plotly_chart(pfi_fig_ss, width = 'stretch', config = {'displayModeBar': False})
 
             st.write('• Partial Dependence Plots (PDPs):')
