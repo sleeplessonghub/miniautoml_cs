@@ -45,7 +45,7 @@ if uploaded_file:
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'!", icon = '🛑')
     st.stop()
-  st.warning('Data loaded, do not delete the uploaded file during analysis to avoid errors/unusual app behavior!', icon = '🚧')
+  st.warning('Data loaded, do not delete the uploaded file during analysis to avoid unusual app behavior!', icon = '🚧')
 else:
   st.info('Upload a file of the requested format from your device to begin the analysis!', icon = 'ℹ️')
 
