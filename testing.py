@@ -107,8 +107,6 @@ if st.session_state['df_pp'] is not None:
         valid_assigned_count = valid_assigned_count + 1
       col_types.append(data_type)
     submitted = st.form_submit_button('Confirm type specification')
-  
-  st.session_state['data_tracker'] = st.session_state['data_tracker'] + ''.join(col_types) # To be used for new data check for ML (column types)
 
   if submitted == True:
     st.session_state['submitted_ref'] = True
@@ -125,6 +123,8 @@ if st.session_state['df_pp'] is not None:
       st.session_state['submitted_ref'] = False
     else:
       st.write('✅ — Dataset variable type specification complete!') # Guarded execution block (layer 2)
+
+      st.session_state['data_tracker'] = st.session_state['data_tracker'] + ''.join(col_types) # To be used for new data check for ML (column types)
 
       # Random sampling in the case of large population
       if len(df_pp) > 20000:
