@@ -28,7 +28,7 @@ if 'submitted_ref' not in st.session_state:
 if 'submitted_2_ref' not in st.session_state:
   st.session_state['submitted_2_ref'] = False # Layer 3 check
 
-st.session_state['data_tracker'] = None # To be used for new data check for ML (initialization/reset)
+st.session_state['data_tracker'] = '' # To be used for new data check for ML (initialization/reset)
 
 # Dataset upload and conversion to a pandas dataframe
 uploaded_file = st.file_uploader("Upload a '.csv' or '.xlsx' file", type = ['csv', 'xlsx'], accept_multiple_files = False)
@@ -45,7 +45,7 @@ if uploaded_file:
   except:
     st.error("Uploaded file format must be in either '.csv' or '.xlsx'!", icon = '🛑')
     st.stop()
-  st.warning('Data loaded, do not delete the uploaded file during analysis!', icon = '🚧')
+  st.warning('Data loaded, do not delete the uploaded file during analysis to avoid errors/unusual app behavior!', icon = '🚧')
 else:
   st.info('Upload a file of the requested format from your device to begin the analysis!', icon = 'ℹ️')
 
@@ -108,6 +108,8 @@ if st.session_state['df_pp'] is not None:
       col_types.append(data_type)
     submitted = st.form_submit_button('Confirm type specification')
 
+  st.session_state['data_tracker'] = st.session_state['data_tracker'] + ''.join(col_types) # To be used for new data check for ML (column types)
+
   if submitted == True:
     st.session_state['submitted_ref'] = True
 
@@ -123,9 +125,6 @@ if st.session_state['df_pp'] is not None:
       st.session_state['submitted_ref'] = False
     else:
       st.write('✅ — Dataset variable type specification complete!') # Guarded execution block (layer 2)
-
-      if col_types:
-        st.session_state['data_tracker'] = st.session_state['data_tracker'] + ''.join(col_types) # To be used for new data check for ML (column types)
 
       # Random sampling in the case of large population
       if len(df_pp) > 20000:
