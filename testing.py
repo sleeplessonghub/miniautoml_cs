@@ -370,12 +370,13 @@ if st.session_state['df_pp'] is not None:
           if train[target].dtypes == float or train[target].dtypes == int:
             is_object = False
           elif train[target].dtypes == object:
-            st.dataframe(train[target].astype(str).value_counts(sort = True))
+            st.dataframe(train[target].value_counts(sort = True).astype(str))
             target_class_options = ['-'] + train[target].unique().tolist()
             target_class = st.selectbox('Select a class 1 label:', (target_class_options), accept_new_options = False)
             if target_class == '-':
               unassigned_count_2 = unassigned_count_2 + 1
             is_object = True
+        st.write('')
         submitted_2 = st.form_submit_button('Confirm target assignment')
       
       st.session_state['data_tracker'] = st.session_state['data_tracker'] + target # To be used for new data check for ML (target column)
