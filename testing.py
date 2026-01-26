@@ -343,7 +343,7 @@ if st.session_state['df_pp'] is not None:
       # Target variable selection
       st.write('Target Variable Selection:')
       train_info = pd.DataFrame({'Variables': train.columns, 'Non-Null Count': train.count(numeric_only = False), 'Data Type': train.dtypes}).reset_index(drop = True)
-      st.dataframe(train_info.astype(str), hide_index = True)
+      st.dataframe(train_info.astype(str), height = 213, hide_index = True)
       unassigned_count_2 = 0
       target = None
       target_class = None
@@ -964,5 +964,5 @@ if st.session_state['df_pp'] is not None:
           # E
 
 else:
-  st.subheader('No file upload detected')
+  st.subheader('No file upload detected 💤')
   
