@@ -93,7 +93,7 @@ if st.session_state['df_pp'] is not None:
   id_count = 0
   unassigned_count = 0
   valid_assigned_count = 0
-  with st.form('data_type_specification_form'):
+  with st.form('data_type_specification_form', height = 250):
     st.write(tw.dedent(
         """
         Specify column data type!
@@ -341,7 +341,10 @@ if st.session_state['df_pp'] is not None:
         st.write(f'⋯ {len(test)} rows left for testing set post-outlier handling!')
 
       # Target variable selection
-      st.write('Target Variable Selection:')
+      if len(train.columns) <= 5:
+        st.write('Target Variable Selection:')
+      elif len(train.columns) > 5:
+        st.write('Target Variable Selection (Scrollable):')
       train_info = pd.DataFrame({'Variables': train.columns, 'Non-Null Count': train.count(numeric_only = False), 'Data Type': train.dtypes}).reset_index(drop = True)
       st.dataframe(train_info.astype(str), height = 213, hide_index = True)
       unassigned_count_2 = 0
