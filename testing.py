@@ -93,7 +93,7 @@ if st.session_state['df_pp'] is not None:
   id_count = 0
   unassigned_count = 0
   valid_assigned_count = 0
-  with st.form('data_type_specification_form', height = 250):
+  with st.form('data_type_specification_form', height = 350):
     st.write(tw.dedent(
         """
         Specify column data type!
@@ -370,7 +370,7 @@ if st.session_state['df_pp'] is not None:
           if train[target].dtypes == float or train[target].dtypes == int:
             is_object = False
           elif train[target].dtypes == object:
-            st.write(train[target].value_counts())
+            st.dataframe(train[target].astype(str).value_counts(sort = True))
             target_class_options = ['-'] + train[target].unique().tolist()
             target_class = st.selectbox('Select a class 1 label:', (target_class_options), accept_new_options = False)
             if target_class == '-':
