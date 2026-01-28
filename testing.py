@@ -338,13 +338,13 @@ if st.session_state['df_pp'] is not None:
       #     train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
       #     test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
       #     outlier_handling_check = outlier_handling_check + 1
-      
-      train.reset_index(drop = True, inplace = True)
-      test.reset_index(drop = True, inplace = True)
-      if outlier_handling_check > 0:
-        st.write('✅ — Dataset outlier handling complete!')
-        st.write(f'⋯ {len(train)} rows left for training set post-outlier handling!')
-        st.write(f'⋯ {len(test)} rows left for testing set post-outlier handling!')
+      # 
+      # train.reset_index(drop = True, inplace = True)
+      # test.reset_index(drop = True, inplace = True)
+      # if outlier_handling_check > 0:
+      #   st.write('✅ — Dataset outlier handling complete!')
+      #   st.write(f'⋯ {len(train)} rows left for training set post-outlier handling!')
+      #   st.write(f'⋯ {len(test)} rows left for testing set post-outlier handling!')
 
       # Target variable selection
       if len(train.columns) <= 5:
