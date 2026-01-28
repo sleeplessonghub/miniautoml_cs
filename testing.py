@@ -314,31 +314,30 @@ if st.session_state['df_pp'] is not None:
         if value == 'Float' or value == 'Integer':
           col_names_num.append(col_names[index])
       
-      # Outlier handling and power transformation (temporarily halted due to data loss and user interpretability issues, 1 of 2 blocks)
-      """
-      transformer = PowerTransformer(method = 'yeo-johnson', standardize = False)
-      train_cutoff_dict_low = dict()
-      train_cutoff_dict_high = dict()
-      skew = 0
-      kurt_fish = 0
-      outlier_handling_check = 0
-      for index, value in enumerate(col_names_num):
-        train_cutoff_dict_low[col_names_num[index]] = train[col_names_num[index]].quantile(0.0015)
-        train_cutoff_dict_high[col_names_num[index]] = train[col_names_num[index]].quantile(0.9985)
-        skew = train[col_names_num[index]].skew()
-        kurt_fish = train[col_names_num[index]].kurtosis()
-        if kurt_fish >= 3.00:
-          train = train[train[col_names_num[index]] > train_cutoff_dict_low.get(col_names_num[index])]
-          train = train[train[col_names_num[index]] < train_cutoff_dict_high.get(col_names_num[index])]
-          outlier_handling_check = outlier_handling_check + 1
-          if abs(skew) >= 1.00:
-            train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
-            test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
-            outlier_handling_check = outlier_handling_check + 1
-        elif abs(skew) >= 1.00:
-          train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
-          test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
-          outlier_handling_check = outlier_handling_check + 1
+      # Outlier handling and power transformation (temporarily halted due to data loss and user interpretability issues, 1 of 3 blocks)
+      # transformer = PowerTransformer(method = 'yeo-johnson', standardize = False)
+      # train_cutoff_dict_low = dict()
+      # train_cutoff_dict_high = dict()
+      # skew = 0
+      # kurt_fish = 0
+      # outlier_handling_check = 0
+      # for index, value in enumerate(col_names_num):
+      #   train_cutoff_dict_low[col_names_num[index]] = train[col_names_num[index]].quantile(0.0015)
+      #   train_cutoff_dict_high[col_names_num[index]] = train[col_names_num[index]].quantile(0.9985)
+      #   skew = train[col_names_num[index]].skew()
+      #   kurt_fish = train[col_names_num[index]].kurtosis()
+      #   if kurt_fish >= 3.00:
+      #     train = train[train[col_names_num[index]] > train_cutoff_dict_low.get(col_names_num[index])]
+      #     train = train[train[col_names_num[index]] < train_cutoff_dict_high.get(col_names_num[index])]
+      #     outlier_handling_check = outlier_handling_check + 1
+      #     if abs(skew) >= 1.00:
+      #       train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
+      #       test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
+      #       outlier_handling_check = outlier_handling_check + 1
+      #   elif abs(skew) >= 1.00:
+      #     train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
+      #     test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
+      #     outlier_handling_check = outlier_handling_check + 1
       
       train.reset_index(drop = True, inplace = True)
       test.reset_index(drop = True, inplace = True)
@@ -346,7 +345,6 @@ if st.session_state['df_pp'] is not None:
         st.write('✅ — Dataset outlier handling complete!')
         st.write(f'⋯ {len(train)} rows left for training set post-outlier handling!')
         st.write(f'⋯ {len(test)} rows left for testing set post-outlier handling!')
-      """
 
       # Target variable selection
       if len(train.columns) <= 5:
@@ -481,24 +479,22 @@ if st.session_state['df_pp'] is not None:
           st.write(f'⋯ {len(feature_test)} rows left for feature (test) set post-feature/target split!')
           st.write(f'⋯ {len(target_test)} rows left for target (test) set post-feature/target split!')
 
-          # Z-score standardization of numerical variables (temporarily halted due to data loss and user interpretability issues, 2 of 2 blocks)
-          """
-          scaler = StandardScaler()
-          if dep_var not in col_names_num and is_object == False:
-            col_names_num.append(dep_var)
-          for col in col_names_hc:
-            col_names_num.append(col)
-          
-          for col in col_names_num:
-            if col == dep_var:
-              target_train[col] = scaler.fit_transform(target_train[[col]]).flatten()
-              target_test[col] = scaler.transform(target_test[[col]]).flatten()
-            else:
-              feature_train[col] = scaler.fit_transform(feature_train[[col]]).flatten()
-              feature_test[col] = scaler.transform(feature_test[[col]]).flatten()
-          if col_names_num:
-            st.write('✅ — Z-score standardization complete!')
-          """
+          # Z-score standardization of numerical variables (temporarily halted due to data loss and user interpretability issues, 2 of 3 blocks)
+          # scaler = StandardScaler()
+          # if dep_var not in col_names_num and is_object == False:
+          #   col_names_num.append(dep_var)
+          # for col in col_names_hc:
+          #   col_names_num.append(col)
+          # 
+          # for col in col_names_num:
+          #   if col == dep_var:
+          #     target_train[col] = scaler.fit_transform(target_train[[col]]).flatten()
+          #     target_test[col] = scaler.transform(target_test[[col]]).flatten()
+          #   else:
+          #     feature_train[col] = scaler.fit_transform(feature_train[[col]]).flatten()
+          #     feature_test[col] = scaler.transform(feature_test[[col]]).flatten()
+          # if col_names_num:
+          #   st.write('✅ — Z-score standardization complete!')
           
           # Undersampling to handle imbalanced categorical target
           if is_object == True:
@@ -565,22 +561,20 @@ if st.session_state['df_pp'] is not None:
             if resampled == True:
               target_train_balanced.rename(columns = {col: str(col_fix)}, inplace = True)
           
-          # Duplicated column names fix (permanently halted due to unnecessity)
-          """
-          cols = list(feature_train.columns)
-          unique_cols = set(cols)
-          for x in unique_cols:
-            num = 0
-            for i in range(0, len(cols)):
-              if cols[i] == x:
-                num = num + 1
-                if num >= 2:
-                  cols[i] = cols[i] + '_' + str(num)
-          feature_train.columns = cols
-          feature_test.columns = cols
-          if resampled == True:
-            feature_train_balanced.columns = cols
-          """
+          # Duplicated column names fix (permanently halted due to unnecessity, 3 of 3 blocks)
+          # cols = list(feature_train.columns)
+          # unique_cols = set(cols)
+          # for x in unique_cols:
+          #   num = 0
+          #   for i in range(0, len(cols)):
+          #     if cols[i] == x:
+          #       num = num + 1
+          #       if num >= 2:
+          #         cols[i] = cols[i] + '_' + str(num)
+          # feature_train.columns = cols
+          # feature_test.columns = cols
+          # if resampled == True:
+          #   feature_train_balanced.columns = cols
           
           # Setting lowercase column names for better UI (pre-ML)
           feature_train.columns = feature_train.columns.str.lower()
