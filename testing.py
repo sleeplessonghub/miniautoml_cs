@@ -65,6 +65,8 @@ if st.session_state['df_pp'] is not None:
   for col in original_columns:
     if col.startswith('unnamed:') or len(df_pp) == df_pp[col].isna().sum() or df_pp[col].nunique() == 1:
       df_pp.drop(col, axis = 1, inplace = True)
+  
+  df_pp = df_pp.loc[:, ~df_pp.columns.duplicated()].copy() # Removing duplicated columns while keeping first instance
 
   # Dataset column name/object values leading/trailing white space cleaning
   original_columns_2 = [col for col in df_pp.columns]
@@ -82,7 +84,7 @@ if st.session_state['df_pp'] is not None:
   st.write('✅ — Dataset upload and conversion to a pandas dataframe complete!')
   st.write('✅ — Dataset unusable column and white space cleaning complete!')
   st.write('Dataset Preview:')
-  st.dataframe(df_pp.head().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))))
+  st.dataframe(df_pp.head().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))), placeholder = '')
   st.write(f'⋯ {len(df_pp)} initial rows for analysis!')
   if 'col_names' not in st.session_state:
     st.session_state['col_names'] = None
@@ -312,7 +314,8 @@ if st.session_state['df_pp'] is not None:
         if value == 'Float' or value == 'Integer':
           col_names_num.append(col_names[index])
       
-      # Outlier handling and power transformation
+      # Outlier handling and power transformation (temporarily halted due to data loss and user interpretability issues, 1 of 2 blocks)
+      """
       transformer = PowerTransformer(method = 'yeo-johnson', standardize = False)
       train_cutoff_dict_low = dict()
       train_cutoff_dict_high = dict()
@@ -343,6 +346,7 @@ if st.session_state['df_pp'] is not None:
         st.write('✅ — Dataset outlier handling complete!')
         st.write(f'⋯ {len(train)} rows left for training set post-outlier handling!')
         st.write(f'⋯ {len(test)} rows left for testing set post-outlier handling!')
+      """
 
       # Target variable selection
       if len(train.columns) <= 5:
@@ -444,6 +448,7 @@ if st.session_state['df_pp'] is not None:
             st.write('✅ — One hot encoding complete!')
           
           # Target encoding for high cardinality categorical features
+          target_encoded_vars = pd.DataFrame()
           col_names_2 = [col for col in train.columns]
           col_names_hc = []
           for col in col_names_2:
@@ -454,8 +459,10 @@ if st.session_state['df_pp'] is not None:
           elif is_object == True:
             t_encoder = TargetEncoder(target_type = 'binary', smooth = 'auto', random_state = 42)
           for col in col_names_hc:
+            target_encoded_vars[f'{col}_Pre_Enc'] = train[col]
             train[col] = t_encoder.fit_transform(train[[col]], train[[target_encoded if is_object == True else target]]).flatten()
             test[col] = t_encoder.transform(test[[col]]).flatten()
+            target_encoded_vars[f'{col}_Post_Enc'] = train[col].round(4)
           
           train.reset_index(drop = True, inplace = True)
           test.reset_index(drop = True, inplace = True)
@@ -474,7 +481,8 @@ if st.session_state['df_pp'] is not None:
           st.write(f'⋯ {len(feature_test)} rows left for feature (test) set post-feature/target split!')
           st.write(f'⋯ {len(target_test)} rows left for target (test) set post-feature/target split!')
 
-          # Z-score standardization of numerical variables
+          # Z-score standardization of numerical variables (temporarily halted due to data loss and user interpretability issues, 2 of 2 blocks)
+          """
           scaler = StandardScaler()
           if dep_var not in col_names_num and is_object == False:
             col_names_num.append(dep_var)
@@ -490,6 +498,7 @@ if st.session_state['df_pp'] is not None:
               feature_test[col] = scaler.transform(feature_test[[col]]).flatten()
           if col_names_num:
             st.write('✅ — Z-score standardization complete!')
+          """
           
           # Undersampling to handle imbalanced categorical target
           if is_object == True:
@@ -527,7 +536,7 @@ if st.session_state['df_pp'] is not None:
               feature_train_balanced.drop(columns = col_names_num_vif, inplace = True)
             st.write('✅ — VIF multicollinearity diagnostic complete!')
           
-          # Column name string processing error and overlap fix (modeling bug fix)
+          # Column name string processing error fix (modeling bug fix)
           for col in feature_train.columns:
             if col.startswith('_') == False:
               col_fix = '_' + str(col)
@@ -540,6 +549,9 @@ if st.session_state['df_pp'] is not None:
             feature_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
               feature_train_balanced.rename(columns = {col: str(col_fix)}, inplace = True)
+            if not target_encoded_vars.empty:
+              target_encoded_vars.rename(columns = {f'{col}_Pre_Enc': f'{str(col_fix)}_Pre_Enc'}, inplace = True)
+              target_encoded_vars.rename(columns = {f'{col}_Post_Enc': f'{str(col_fix)}_Post_Enc'}, inplace = True)
           for col in target_train.columns:
             if col.startswith('_') == False:
               col_fix = '_' + str(col)
@@ -553,6 +565,8 @@ if st.session_state['df_pp'] is not None:
             if resampled == True:
               target_train_balanced.rename(columns = {col: str(col_fix)}, inplace = True)
           
+          # Duplicated column names fix (permanently halted due to unnecessity)
+          """
           cols = list(feature_train.columns)
           unique_cols = set(cols)
           for x in unique_cols:
@@ -566,6 +580,7 @@ if st.session_state['df_pp'] is not None:
           feature_test.columns = cols
           if resampled == True:
             feature_train_balanced.columns = cols
+          """
           
           # Setting lowercase column names for better UI (pre-ML)
           feature_train.columns = feature_train.columns.str.lower()
@@ -676,12 +691,12 @@ if st.session_state['df_pp'] is not None:
                 • DT Regressor - R2 Score: {r2_dt_reg * 100:.2f}%
                 • LGBM Regressor - R2 Score: {r2_lgbm_reg * 100:.2f}%
 
-                ---- Root Mean Squared Error (RMSE - Unit: Z-Score)
+                ---- Root Mean Squared Error (RMSE - Unit: Same as Target)
                 • Linear Regression - RMSE: {rmse_ln:.4f}
                 • DT Regressor - RMSE: {rmse_dt_reg:.4f}
                 • LGBM Regressor - RMSE: {rmse_lgbm_reg:.4f}
 
-                ---- Mean Absolute Error (MAE - Unit: Z-Score)
+                ---- Mean Absolute Error (MAE - Unit: Same as Target)
                 • Linear Regression - MAE: {mae_ln:.4f}
                 • DT Regressor - MAE: {mae_dt_reg:.4f}
                 • LGBM Regressor - MAE: {mae_lgbm_reg:.4f}
@@ -693,7 +708,7 @@ if st.session_state['df_pp'] is not None:
                 '''
             ).strip())
 
-            # Regression best model explainer (dalex)
+            # Regression best model explainer (dalex) and target encoded variables interpretation
             if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
 
               model_names = ['XAI: Linear Regression', 'XAI: DT Regressor', 'XAI: LGBM Regressor']
@@ -741,9 +756,25 @@ if st.session_state['df_pp'] is not None:
                                                                                     title_x = 0.5,
                                                                                     margin = dict(l = 50),
                                                                                     hovermode = 'closest',
-                                                                                    hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Z-Score Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
+                                                                                    hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Value Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
+              
+              if not target_encoded_vars.empty:
+                with st.spinner('Creating target encoding interpretation table...', show_time = True):
+                  st.text(tw.dedent(
+                      """
+                      > Target Encoded Variable(s) Interpretation
+
+                      • 'Pre_Enc' Suffix = Pre-Target Encoded Variable(s) (Unit: Original Categories)
+                      • 'Post_Enc' Suffix = Post-Target Encoded Variable(s) (Unit: Average Value of Target per Category)
+
+                      • Interpretation Table:
+                      """
+                  ).strip())
+                  st.dataframe(target_encoded_vars.map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                              height = 426 if len(target_encoded_vars) > 10 else 'auto',
+                              hide_index = True)
 
               st.session_state['data_tracker_check'] = st.session_state['data_tracker'] # Data tracker check update
 
@@ -768,6 +799,22 @@ if st.session_state['df_pp'] is not None:
                 st.write('• Partial Dependence Plots (PDPs):')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(st.session_state['pdp_fig_ss'], width = 'stretch', config = {'displayModeBar': False})
+              
+              if not target_encoded_vars.empty:
+                with st.spinner('Creating target encoding interpretation table...', show_time = True):
+                  st.text(tw.dedent(
+                      """
+                      > Target Encoded Variable(s) Interpretation
+
+                      • 'Pre_Enc' Suffix = Pre-Target Encoded Variable(s) (Unit: Original Categories)
+                      • 'Post_Enc' Suffix = Post-Target Encoded Variable(s) (Unit: Average Value of Target per Category)
+
+                      • Interpretation Table:
+                      """
+                  ).strip())
+                  st.dataframe(target_encoded_vars.map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                              height = 426 if len(target_encoded_vars) > 10 else 'auto',
+                              hide_index = True)
           
           elif is_object == True: # Classification modeling
 
@@ -898,7 +945,7 @@ if st.session_state['df_pp'] is not None:
             st.write('• LGBM Classifier (Undersampled):')
             st.code(lgbm_class_rs_metrics, language = None, width = 513)
 
-            # Classification best model explainer (dalex)
+            # Classification best model explainer (dalex) and target encoded variables interpretation
             if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
               
               model_names = ['XAI: Logistic Regression', 'XAI: Logistic Regression (Undersampled)',
@@ -955,6 +1002,22 @@ if st.session_state['df_pp'] is not None:
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
               
+              if not target_encoded_vars.empty:
+                with st.spinner('Creating target encoding interpretation table...', show_time = True):
+                  st.text(tw.dedent(
+                      """
+                      > Target Encoded Variable(s) Interpretation
+
+                      • 'Pre_Enc' Suffix = Pre-Target Encoded Variable(s) (Unit: Original Categories)
+                      • 'Post_Enc' Suffix = Post-Target Encoded Variable(s) (Unit: Probability of Class 1 Target per Category)
+
+                      • Interpretation Table:
+                      """
+                  ).strip())
+                  st.dataframe(target_encoded_vars.map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                              height = 426 if len(target_encoded_vars) > 10 else 'auto',
+                              hide_index = True)
+              
               st.session_state['data_tracker_check'] = st.session_state['data_tracker'] # Data tracker check update
             
             elif st.session_state['data_tracker_check'] == st.session_state['data_tracker']:
@@ -978,6 +1041,22 @@ if st.session_state['df_pp'] is not None:
                 st.write('• Partial Dependence Plots (PDPs):')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(st.session_state['pdp_fig_ss'], width = 'stretch', config = {'displayModeBar': False})
+              
+              if not target_encoded_vars.empty:
+                with st.spinner('Creating target encoding interpretation table...', show_time = True):
+                  st.text(tw.dedent(
+                      """
+                      > Target Encoded Variable(s) Interpretation
+
+                      • 'Pre_Enc' Suffix = Pre-Target Encoded Variable(s) (Unit: Original Categories)
+                      • 'Post_Enc' Suffix = Post-Target Encoded Variable(s) (Unit: Probability of Class 1 Target per Category)
+
+                      • Interpretation Table:
+                      """
+                  ).strip())
+                  st.dataframe(target_encoded_vars.map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                              height = 426 if len(target_encoded_vars) > 10 else 'auto',
+                              hide_index = True)
 
           # E
 
