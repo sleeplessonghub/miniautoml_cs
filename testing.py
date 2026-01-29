@@ -453,9 +453,9 @@ if st.session_state['df_pp'] is not None:
             if train[col].dtypes == object and train[col].nunique() > 5:
               col_names_hc.append(col)
           if is_object == False:
-            t_encoder = TargetEncoder(target_type = 'continuous', smooth = 'auto', cv = 0, shuffle = False, random_state = 42)
+            t_encoder = TargetEncoder(target_type = 'continuous', smooth = 0.0, cv = 2, random_state = 42)
           elif is_object == True:
-            t_encoder = TargetEncoder(target_type = 'binary', smooth = 'auto', cv = 0, shuffle = False, random_state = 42)
+            t_encoder = TargetEncoder(target_type = 'binary', smooth = 0.0, cv = 2, random_state = 42)
           for col in col_names_hc:
             target_encoded_vars[f'{col}_Pre_Enc'] = train[col]
             train[col] = t_encoder.fit_transform(train[[col]], train[[target_encoded if is_object == True else target]]).flatten()
