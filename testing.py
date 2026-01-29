@@ -785,6 +785,7 @@ if st.session_state['df_pp'] is not None:
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                                  hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
                                   column_config = {'Category': st.column_config.Column(width = 105),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
@@ -837,6 +838,7 @@ if st.session_state['df_pp'] is not None:
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                                  hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
                                   column_config = {'Category': st.column_config.Column(width = 105),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
@@ -1051,6 +1053,7 @@ if st.session_state['df_pp'] is not None:
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                                  hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
                                   column_config = {'Category': st.column_config.Column(width = 105),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
@@ -1103,6 +1106,7 @@ if st.session_state['df_pp'] is not None:
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                                  hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
                                   column_config = {'Category': st.column_config.Column(width = 105),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
