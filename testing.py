@@ -49,7 +49,7 @@ if uploaded_file:
     st.stop()
   st.warning('Data loaded, do not delete the uploaded file during analysis to avoid unusual app behavior!', icon = '🚧')
 else:
-  st.info('Upload a file of the requested format from your device to begin the analysis!', icon = 'ℹ️')
+  st.info('Upload a tabular file of the requested format from your device to begin the analysis!', icon = 'ℹ️')
 
 # Guarded execution block (layer 1)
 if st.session_state['df_pp'] is not None:
@@ -453,9 +453,9 @@ if st.session_state['df_pp'] is not None:
             if train[col].dtypes == object and train[col].nunique() > 5:
               col_names_hc.append(col)
           if is_object == False:
-            t_encoder = TargetEncoder(target_type = 'continuous', smooth = 'auto', random_state = 42)
+            t_encoder = TargetEncoder(target_type = 'continuous', smooth = 'auto', cv = 0, shuffle = False, random_state = 42)
           elif is_object == True:
-            t_encoder = TargetEncoder(target_type = 'binary', smooth = 'auto', random_state = 42)
+            t_encoder = TargetEncoder(target_type = 'binary', smooth = 'auto', cv = 0, shuffle = False, random_state = 42)
           for col in col_names_hc:
             target_encoded_vars[f'{col}_Pre_Enc'] = train[col]
             train[col] = t_encoder.fit_transform(train[[col]], train[[target_encoded if is_object == True else target]]).flatten()
