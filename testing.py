@@ -770,7 +770,7 @@ if st.session_state['df_pp'] is not None:
                       """
                       > Target Encoded Variable(s) Interpretation
 
-                      • Encoded Unit = Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
+                      • Encoded Unit : Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
 
                       • Interpretation Table(s):
                       """
@@ -787,7 +787,7 @@ if st.session_state['df_pp'] is not None:
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                  column_config = {'Category': st.column_config.Column(width = 100),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
@@ -823,7 +823,7 @@ if st.session_state['df_pp'] is not None:
                       """
                       > Target Encoded Variable(s) Interpretation
 
-                      • Encoded Unit = Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
+                      • Encoded Unit : Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
 
                       • Interpretation Table(s):
                       """
@@ -840,7 +840,7 @@ if st.session_state['df_pp'] is not None:
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                  column_config = {'Category': st.column_config.Column(width = 100),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
@@ -1038,7 +1038,7 @@ if st.session_state['df_pp'] is not None:
                       """
                       > Target Encoded Variable(s) Interpretation
 
-                      • Encoded Unit = Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
+                      • Encoded Unit : Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
 
                       • Interpretation Table(s):
                       """
@@ -1055,7 +1055,7 @@ if st.session_state['df_pp'] is not None:
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                  column_config = {'Category': st.column_config.Column(width = 100),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
@@ -1091,7 +1091,7 @@ if st.session_state['df_pp'] is not None:
                       """
                       > Target Encoded Variable(s) Interpretation
 
-                      • Encoded Unit = Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
+                      • Encoded Unit : Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
 
                       • Interpretation Table(s):
                       """
@@ -1108,7 +1108,7 @@ if st.session_state['df_pp'] is not None:
                     tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   hide_index = True,
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                  column_config = {'Category': st.column_config.Column(width = 100),
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
