@@ -784,12 +784,12 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tabs_list = [f'{col[:-8]}' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
-                    tab.dataframe(interpretation_tables_list[i].map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                    tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 220),
-                                                   'min': st.column_config.Column('Encoded Value Min.', width = 200),
-                                                   'max': st.column_config.Column('Encoded Value Max.', width = 200),
-                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 200)})
+                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                                   'min': st.column_config.Column('Encoded Value Min.', width = 100),
+                                                   'max': st.column_config.Column('Encoded Value Max.', width = 100),
+                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
 
               st.session_state['data_tracker_check'] = st.session_state['data_tracker'] # Data tracker check update
 
@@ -836,12 +836,12 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tabs_list = [f'{col[:-8]}' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
-                    tab.dataframe(interpretation_tables_list[i].map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                    tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 220),
-                                                   'min': st.column_config.Column('Encoded Value Min.', width = 200),
-                                                   'max': st.column_config.Column('Encoded Value Max.', width = 200),
-                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 200)})
+                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                                   'min': st.column_config.Column('Encoded Value Min.', width = 100),
+                                                   'max': st.column_config.Column('Encoded Value Max.', width = 100),
+                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
           
           elif is_object == True: # Classification modeling
 
@@ -1050,12 +1050,12 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tabs_list = [f'{col[:-8]}' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
-                    tab.dataframe(interpretation_tables_list[i].map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                    tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 220),
-                                                   'min': st.column_config.Column('Encoded Value Min.', width = 200),
-                                                   'max': st.column_config.Column('Encoded Value Max.', width = 200),
-                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 200)})
+                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                                   'min': st.column_config.Column('Encoded Value Min.', width = 100),
+                                                   'max': st.column_config.Column('Encoded Value Max.', width = 100),
+                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
               
               st.session_state['data_tracker_check'] = st.session_state['data_tracker'] # Data tracker check update
             
@@ -1102,12 +1102,12 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tabs_list = [f'{col[:-8]}' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   tabs = st.tabs(interpretation_tabs_list, default = interpretation_tabs_list[0])
                   for i, tab in enumerate(tabs):
-                    tab.dataframe(interpretation_tables_list[i].map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
+                    tab.dataframe(interpretation_tables_list[i].reset_index().map(lambda x: str(int(float(x))) if (str(x).replace('.', '', 1).isdigit() and str(x).endswith('.0')) else (str(round(x, 4)) if isinstance(x, float) else str(x))),
                                   height = 386 if len(interpretation_tables_list[i]) > 10 else 'auto',
-                                  column_config = {'Category': st.column_config.Column(width = 220),
-                                                   'min': st.column_config.Column('Encoded Value Min.', width = 200),
-                                                   'max': st.column_config.Column('Encoded Value Max.', width = 200),
-                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 200)})
+                                  column_config = {'Category': st.column_config.Column(width = 105),
+                                                   'min': st.column_config.Column('Encoded Value Min.', width = 100),
+                                                   'max': st.column_config.Column('Encoded Value Max.', width = 100),
+                                                   'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
 
           # E
 
