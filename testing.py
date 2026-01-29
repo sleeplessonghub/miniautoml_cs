@@ -552,7 +552,7 @@ if st.session_state['df_pp'] is not None:
             if resampled == True:
               feature_train_balanced.rename(columns = {col: str(col_fix)}, inplace = True)
             if not target_encoded_vars.empty:
-              if f'{col}_Pre_Enc' target_encoded_vars.columns:
+              if f'{col}_Pre_Enc' in target_encoded_vars.columns:
                 target_encoded_vars.rename(columns = {f'{col}_Pre_Enc': f'{col_fix}_Pre_Enc'}, inplace = True)
                 target_encoded_vars.rename(columns = {f'{col}_Post_Enc': f'{col_fix}_Post_Enc'}, inplace = True)
                 locals()[f'{col_fix}_Table'] = locals()[f'{col}_Table']
