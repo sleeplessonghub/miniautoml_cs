@@ -779,7 +779,7 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
-                      interpretation_tables_list.append(f'{col[:-8]}_Table')
+                      interpretation_tables_list.append(locals()[f'{col[:-8]}_Table'])
                   interpretation_tabs_list = [f'{col}_Table' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   range_max = len(interpretation_tabs_list)
                   for i in range(0, range_max, 1):
@@ -825,7 +825,7 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
-                      interpretation_tables_list.append(f'{col[:-8]}_Table')
+                      interpretation_tables_list.append(locals()[f'{col[:-8]}_Table'])
                   interpretation_tabs_list = [f'{col}_Table' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   range_max = len(interpretation_tabs_list)
                   for i in range(0, range_max, 1):
@@ -1033,7 +1033,7 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
-                      interpretation_tables_list.append(f'{col[:-8]}_Table')
+                      interpretation_tables_list.append(locals()[f'{col[:-8]}_Table'])
                   interpretation_tabs_list = [f'{col}_Table' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   range_max = len(interpretation_tabs_list)
                   for i in range(0, range_max, 1):
@@ -1079,7 +1079,7 @@ if st.session_state['df_pp'] is not None:
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
-                      interpretation_tables_list.append(f'{col[:-8]}_Table')
+                      interpretation_tables_list.append(locals()[f'{col[:-8]}_Table'])
                   interpretation_tabs_list = [f'{col}_Table' for col in target_encoded_vars.columns if col.endswith('_Pre_Enc')]
                   range_max = len(interpretation_tabs_list)
                   for i in range(0, range_max, 1):
