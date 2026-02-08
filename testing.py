@@ -668,27 +668,27 @@ if st.session_state['df_pp'] is not None:
             # Regression report
             st.write('#### Modeling Report 📋')
             
-            st.markdown(tw.dedent(
+            st.text(tw.dedent(
                 f'''
                 ├── Models Used  
 
                 │ ├── Linear Model — Linear Regression  
                 │ ├── Tree-Based Model — Decision Tree Regressor (DT)  
-                │ └── Ensemble Model — Light Gradient Boosting Machine Regressor (LGBM)  
+                │ ├── Ensemble Model — Light Gradient Boosting Machine Regressor (LGBM)  
 
                 ├── Train/Test Sets Sample Size Validation  
                 
                 │ ├── Feature (Train) Sample Size (n): {len(feature_train)}  
                 │ ├── Target (Train) Sample Size (n): {len(target_train)}  
                 │ ├── Feature (Test) Sample Size (n): {len(feature_test)}  
-                │ └── Target (Test) Sample Size (n): {len(target_test)}  
+                │ ├── Target (Test) Sample Size (n): {len(target_test)}  
 
                 ├── Train/Test Sets Dimensionality Validation  
 
                 │ ├── Feature (Train) Column Count: {len(feature_train.columns)}  
                 │ ├── Target (Train) Column Count: {len(target_train.columns)}  
                 │ ├── Feature (Test) Column Count: {len(feature_test.columns)}  
-                │ └── Target (Test) Column Count: {len(target_test.columns)}  
+                │ ├── Target (Test) Column Count: {len(target_test.columns)}  
 
                 ├── Model Fit Evaluation Metrics (Test Set Predictions)  
 
