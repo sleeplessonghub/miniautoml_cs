@@ -1123,7 +1123,7 @@ if st.session_state['df_pp'] is not None:
           # Preparing saved best model fit for new predictions
           st.divider()
           st.header('⸻ Model Deployment 🎯')
-          st.info('Generate forecasts with new data based on the previously fitted best model!', icon = 'ℹ️')
+          st.info('Generate forecasts with new data based on the previously best fitted model!', icon = 'ℹ️')
           
           prediction_list = []
           with st.form('best_model_deployment_form', height = 270):
