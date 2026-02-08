@@ -1125,7 +1125,7 @@ if st.session_state['df_pp'] is not None:
           st.write('')
           
           prediction_list = []
-          with st.form('best_model_deployment_form', height = 290):
+          with st.form('best_model_deployment_form', height = 275):
             st.write(tw.dedent(
                 """
                 Input data for new predictions!
