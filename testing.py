@@ -670,7 +670,7 @@ if st.session_state['df_pp'] is not None:
             
             st.markdown(tw.dedent(
                 f'''
-                1. Models Used <br>
+                1. Models Used  
 
                 1.1 Linear Model — Linear Regression  
                 1.2 Tree-Based Model — Decision Tree Regressor (DT)  
