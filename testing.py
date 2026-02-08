@@ -1128,10 +1128,9 @@ if st.session_state['df_pp'] is not None:
                 * Input numerically encoded values for categories of target encoded variables
                 '''
             ).strip())
-            st.write('Input value(s) for new predictions!')
             for col in feature_train.columns:
               if feature_train[col].nunique() > 2:
-                num_val = st.number_input(f"Insert '{col}' column value:", value = None, placeholder = 'Type a number...')
+                num_val = st.number_input(f"Insert '{col}' column value:", value = None, step = None, placeholder = 'Type a number...')
                 prediction_list.append(num_val)
               if feature_train[col].nunique() == 2:
                 cat_val = st.radio(f"Select '{col}' variable state:", ['True', 'False'], index = None, horizontal = True)
