@@ -539,6 +539,11 @@ if st.session_state['df_pp'] is not None:
             feature_test.drop(columns = col_names_num_vif, inplace = True)
             if resampled == True:
               feature_train_balanced.drop(columns = col_names_num_vif, inplace = True)
+            if not target_encoded_vars.empty:
+              col_names_num_vif_pre_enc = [x + '_Pre_Enc' for x in col_names_num_vif]
+              col_names_num_vif_post_enc = [x + '_Post_Enc' for x in col_names_num_vif]
+              target_encoded_vars.drop(columns = col_names_num_vif_pre_enc, inplace = True)
+              target_encoded_vars.drop(columns = col_names_num_vif_post_enc, inplace = True)
             st.write('✅ — VIF multicollinearity diagnostic complete!')
           
           # Column name string processing error fix (modeling bug fix)
