@@ -558,6 +558,7 @@ if st.session_state['df_pp'] is not None:
             if len(col_fix) >= 30:
               col_fix = col_fix[:13] + '...' + col_fix[-14:]
             col_fix = col_fix.rstrip('_')
+            col_fix = re.sub(r'_{2,}', '_', col_fix)
             feature_train.rename(columns = {col: str(col_fix)}, inplace = True)
             feature_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
@@ -577,6 +578,7 @@ if st.session_state['df_pp'] is not None:
             if len(col_fix) >= 30:
               col_fix = col_fix[:13] + '...' + col_fix[-14:]
             col_fix = col_fix.rstrip('_')
+            col_fix = re.sub(r'_{2,}', '_', col_fix)
             target_train.rename(columns = {col: str(col_fix)}, inplace = True)
             target_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
@@ -1147,8 +1149,6 @@ if st.session_state['df_pp'] is not None:
                 """
             ).strip())
             for col in feature_train.columns:
-              if not col.startswith('_'):
-                col = '_' + col
               if feature_train[col].nunique() > 2:
                 num_val = st.text_input(f"Insert '{col}' column value:", placeholder = 'Insert new data for prediction...')
                 try:
