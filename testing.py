@@ -77,6 +77,8 @@ if st.session_state['df_pp'] is not None:
     if df_pp[col].dtypes == object:
       df_pp[col] = df_pp[col].astype('string') # Bug fix, sometimes boolean can't pass as string
       df_pp[col] = df_pp[col].str.strip()
+      df_pp[col] = df_pp[col].str.replace('  ', ' ')
+      df_pp[col] = df_pp[col].str.lower()
       df_pp[col] = df_pp[col].astype(object)
       df_pp[col] = df_pp[col].replace(pd.NA, np.nan)
     if col != col.strip():
@@ -555,6 +557,7 @@ if st.session_state['df_pp'] is not None:
             col_fix = re.sub(r'[^a-zA-Z0-9]', '_', str(col_fix))
             if len(col_fix) >= 30:
               col_fix = col_fix[:13] + '...' + col_fix[-14:]
+            col_fix = col_fix.rstrip('_')
             feature_train.rename(columns = {col: str(col_fix)}, inplace = True)
             feature_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
@@ -573,6 +576,7 @@ if st.session_state['df_pp'] is not None:
             col_fix = re.sub(r'[^a-zA-Z0-9]', '_', str(col_fix))
             if len(col_fix) >= 30:
               col_fix = col_fix[:13] + '...' + col_fix[-14:]
+            col_fix = col_fix.rstrip('_')
             target_train.rename(columns = {col: str(col_fix)}, inplace = True)
             target_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
@@ -739,7 +743,7 @@ if st.session_state['df_pp'] is not None:
                   ▼ Explainable Artificial Intelligence (XAI)  
 
                   ├─ Best Model - {best_model_name[5:]}  
-                  ├─ Evaluation Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {best_model_rmse:.4f}  
+                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {best_model_rmse:.4f}  
                   ├─ Loss Function - Root Mean Squared Error (RMSE)  
                   '''
               ).strip())
@@ -811,7 +815,7 @@ if st.session_state['df_pp'] is not None:
                   ▼ Explainable Artificial Intelligence (XAI)  
 
                   ├─ Best Model - {st.session_state['best_model_name'][5:]}  
-                  ├─ Evaluation Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {st.session_state['best_model_rmse']:.4f}  
+                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {st.session_state['best_model_rmse']:.4f}  
                   ├─ Loss Function - Root Mean Squared Error (RMSE)  
                   """
               ).strip())
@@ -1007,7 +1011,7 @@ if st.session_state['df_pp'] is not None:
                   ▼ Explainable Artificial Intelligence (XAI)  
 
                   ├─ Best Model - {best_model_name[5:]}  
-                  ├─ Evaluation Metric for Determination of Best Model - Class 1 F1 Score at {best_model_f1 * 100:.2f}%  
+                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {best_model_f1 * 100:.2f}%  
                   ├─ Loss Function - Area Above the Curve (1-AUC)  
                   '''
               ).strip())
@@ -1079,7 +1083,7 @@ if st.session_state['df_pp'] is not None:
                   ▼ Explainable Artificial Intelligence (XAI)  
 
                   ├─ Best Model - {st.session_state['best_model_name'][5:]}  
-                  ├─ Evaluation Metric for Determination of Best Model - Class 1 F1 Score at {st.session_state['best_model_f1'] * 100:.2f}%  
+                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {st.session_state['best_model_f1'] * 100:.2f}%  
                   ├─ Loss Function - Area Above the Curve (1-AUC)  
                   """
               ).strip())
