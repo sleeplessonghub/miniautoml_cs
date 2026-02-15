@@ -549,6 +549,8 @@ if st.session_state['df_pp'] is not None:
               col_names_num_vif_post_enc = [x + '_Post_Enc' for x in col_names_num_vif]
               target_encoded_vars.drop(columns = col_names_num_vif_pre_enc, inplace = True)
               target_encoded_vars.drop(columns = col_names_num_vif_post_enc, inplace = True)
+            if len(feature_train.columns) == 0:
+              st.error('No feature column detected post-VIF multicollinearity diagnostic!', icon = '🛑')
             st.write('✅ — VIF multicollinearity diagnostic complete!')
           
           # Column name string processing error fix (modeling bug fix)
