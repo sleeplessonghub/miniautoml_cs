@@ -1195,11 +1195,10 @@ if st.session_state['df_pp'] is not None:
                 ))
               
               elif is_object == True:
-
+                
                 pred_scalar = int(new_prediction.flatten()[0])
                 probability = st.session_state['best_model_fit'].predict_proba([prediction_list])[0]
-                probability_disp = probability[1].item() if pred_scalar == 1 else probability[0].item()
-                probability_txt = 'Class 1 Probability' if pred_scalar == 1 else 'Class 0 Probability'
+                probability_disp = probability[1].item()
                 class_outcome = 'Class 1' if pred_scalar == 1 else 'Class 0'
 
                 st.markdown(tw.dedent(
@@ -1207,8 +1206,8 @@ if st.session_state['df_pp'] is not None:
                     ▼ Best Classification Model Prediction  
 
                     ├─ Best Classification Model: {st.session_state['best_model_name'][5:]}  
-                    ├─ Best Model Test Set F1 Score: {st.session_state['best_model_f1'] * 100:.2f}%  
-                    ├─ Best Model {probability_txt}: {probability_disp * 100:.2f}%  
+                    ├─ Best Model Test Set Class 1 F1 Score: {st.session_state['best_model_f1'] * 100:.2f}%  
+                    ├─ Best Model Class 1 Probability: {probability_disp * 100:.2f}%  
                     ├─ Best Model Target Class Prediction: {class_outcome}  
                     """
                 ).strip())
