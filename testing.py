@@ -667,7 +667,7 @@ if st.session_state['df_pp'] is not None:
             with st.spinner('Fitting light gradient boosting machine regressor...', show_time = True):
               if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
                 lgbm_reg = lgbm.LGBMRegressor(random_state = 42, n_jobs = -1)
-                lgbm_reg.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
+                lgbm_reg.fit(feature_train, target_train)
                 lgbm_reg_pred = lgbm_reg.predict(feature_test)
                 r2_lgbm_reg = st.session_state['r2_lgbm_reg'] = r2_score(target_test, lgbm_reg_pred)
                 rmse_lgbm_reg = st.session_state['rmse_lgbm_reg'] = root_mean_squared_error(target_test, lgbm_reg_pred)
@@ -928,7 +928,7 @@ if st.session_state['df_pp'] is not None:
             with st.spinner('Fitting light gradient boosting machine classifier...', show_time = True):
               if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
                 lgbm_class = lgbm.LGBMClassifier(random_state = 42, n_jobs = -1)
-                lgbm_class.fit(feature_train, target_train, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
+                lgbm_class.fit(feature_train, target_train)
                 lgbm_class_pred = lgbm_class.predict(feature_test)
                 lgbm_class_metrics = st.session_state['lgbm_class_metrics'] = classification_report(target_test, lgbm_class_pred)
                 lgbm_f1 = f1_score(target_test, lgbm_class_pred, pos_label = 1, average = 'binary')
@@ -941,7 +941,7 @@ if st.session_state['df_pp'] is not None:
             with st.spinner('Fitting light gradient boosting machine classifier (undersampled)...', show_time = True):
               if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
                 lgbm_class_rs = lgbm.LGBMClassifier(random_state = 42, n_jobs = -1)
-                lgbm_class_rs.fit(feature_train_balanced, target_train_balanced, eval_set = [(feature_test, target_test)], callbacks = [lgbm.early_stopping(stopping_rounds = 3)])
+                lgbm_class_rs.fit(feature_train_balanced, target_train_balanced)
                 lgbm_class_rs_pred = lgbm_class_rs.predict(feature_test)
                 lgbm_class_rs_metrics = st.session_state['lgbm_class_rs_metrics'] = classification_report(target_test, lgbm_class_rs_pred)
                 lgbm_f1_bal = f1_score(target_test, lgbm_class_rs_pred, pos_label = 1, average = 'binary')
