@@ -68,7 +68,7 @@ if st.session_state['df_pp'] is not None:
   for col in original_columns:
     if col.startswith('unnamed:') or len(df_pp) == df_pp[col].isna().sum() or df_pp[col].nunique() == 1:
       df_pp.drop(col, axis = 1, inplace = True)
-  
+
   df_pp = df_pp.loc[:, ~df_pp.columns.duplicated(keep = 'first')].copy() # Removing duplicated columns while keeping first instance
 
   # Dataset column name/object values leading/trailing white space cleaning
@@ -216,7 +216,7 @@ if st.session_state['df_pp'] is not None:
             train[col_names[index]] = train[col_names[index]].astype(str)
             central_tend_dict[col_names[index]] = train[col_names[index]].mode(dropna = True)[0]
             train[col_names[index]] = train[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
-        
+
         test.dropna(inplace = True)
         for index, value in enumerate(col_types):
           if value == 'Float':
@@ -240,7 +240,7 @@ if st.session_state['df_pp'] is not None:
           elif value == 'Nominal':
             test[col_names[index]] = test[col_names[index]].astype(str)
             test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
-      
+
       else:
 
         for index, value in enumerate(col_types):
@@ -275,7 +275,7 @@ if st.session_state['df_pp'] is not None:
             central_tend_dict[col_names[index]] = train[col_names[index]].mode(dropna = True)[0]
             train[col_names[index]] = train[col_names[index]].fillna(train[col_names[index]].mode()[0])
             train[col_names[index]] = train[col_names[index]].replace('', train[col_names[index]].mode()[0])
-        
+
         for index, value in enumerate(col_types):
           if value == 'Float':
             test[col_names[index]] = test[col_names[index]].fillna(placeholder)
@@ -304,7 +304,7 @@ if st.session_state['df_pp'] is not None:
             test[col_names[index]] = test[col_names[index]].replace('nan', np.nan)
             test[col_names[index]] = test[col_names[index]].fillna(central_tend_dict.get(col_names[index]))
             test[col_names[index]] = test[col_names[index]].replace('', central_tend_dict.get(col_names[index]))
-      
+
       train.reset_index(drop = True, inplace = True)
       test.reset_index(drop = True, inplace = True)
       if percent_missing > 0:
@@ -316,13 +316,13 @@ if st.session_state['df_pp'] is not None:
           st.warning(f'Warning: large missingness detected, imputed missingness rows make up {percent_missing * 100:.2f}% of total rows!', icon = '🚧')
           st.write(f'⋯ {len(train)} rows left for training set post-missingness handling!')
           st.write(f'⋯ {len(test)} rows left for testing set post-missingness handling!')
-      
+
       # Numerical list preparation for outlier handling
       col_names_num = []
       for index, value in enumerate(col_types):
         if value == 'Float' or value == 'Integer':
           col_names_num.append(col_names[index])
-      
+
       # Outlier handling and power transformation (temporarily halted due to data loss and user interpretability issues, 1 of 3 blocks)
       # transformer = PowerTransformer(method = 'yeo-johnson', standardize = False)
       # train_cutoff_dict_low = dict()
@@ -347,7 +347,7 @@ if st.session_state['df_pp'] is not None:
       #     train[col_names_num[index]] = transformer.fit_transform(train[[col_names_num[index]]]).flatten()
       #     test[col_names_num[index]] = transformer.transform(test[[col_names_num[index]]]).flatten()
       #     outlier_handling_check = outlier_handling_check + 1
-      # 
+      #
       # train.reset_index(drop = True, inplace = True)
       # test.reset_index(drop = True, inplace = True)
       # if outlier_handling_check > 0:
@@ -402,7 +402,7 @@ if st.session_state['df_pp'] is not None:
               unassigned_count_2 = unassigned_count_2 + 1
             is_object = True
         submitted_2 = st.form_submit_button('Confirm target assignment')
-      
+
       st.session_state['data_tracker'] = st.session_state['data_tracker'] + target # To be used for new data check for ML (target column)
       if is_object == False or target_class == None:
         pass
@@ -411,7 +411,7 @@ if st.session_state['df_pp'] is not None:
 
       if submitted_2 == True:
         st.session_state['submitted_2_ref'] = True
-      
+
       if st.session_state['submitted_2_ref'] == True:
         if unassigned_count_2 > 0:
           st.error('Detected target variable/class without dropdown selection!', icon = '🛑')
@@ -431,7 +431,7 @@ if st.session_state['df_pp'] is not None:
             del col_names[idx]
             del col_types[idx] # 'col_names'/'col_types' lists are no longer in use for manipulation past this line as they're no longer parallel
             st.write('✅ — Categorical target one-vs-rest encoding complete!')
-          
+
           # Single cardinality categorical variables cleaning
           col_names_2 = [col for col in train.columns]
           for col in col_names_2:
@@ -439,7 +439,7 @@ if st.session_state['df_pp'] is not None:
               train.drop(col, axis = 1, inplace = True)
               test.drop(col, axis = 1, inplace = True)
           col_names_2 = [col for col in train.columns]
-          
+
           # One Hot Encoding (OHE) for low cardinality categorical features
           col_names_lc = []
           for col in col_names_2:
@@ -456,7 +456,7 @@ if st.session_state['df_pp'] is not None:
           test.drop(col_names_lc, axis = 1, inplace = True)
           if col_names_lc:
             st.write('✅ — One hot encoding complete!')
-          
+
           # Target encoding for high cardinality categorical features
           target_encoded_vars = pd.DataFrame()
           col_names_2 = [col for col in train.columns]
@@ -473,13 +473,13 @@ if st.session_state['df_pp'] is not None:
             train[col] = t_encoder.fit_transform(train[[col]], train[[target_encoded if is_object == True else target]]).flatten()
             test[col] = t_encoder.transform(test[[col]]).flatten()
             target_encoded_vars[f'{col}_Post_Enc'] = train[col].round(4)
-          
+
           if not target_encoded_vars.empty:
             for col in train.columns:
               if f'{col}_Pre_Enc' in target_encoded_vars:
                 locals()[f'{col}_Results'] = pd.DataFrame({'Category': target_encoded_vars[f'{col}_Pre_Enc'], 'Encoded Value': target_encoded_vars[f'{col}_Post_Enc']})
                 locals()[f'{col}_Table'] = locals()[f'{col}_Results'].groupby('Category')['Encoded Value'].agg(['min', 'max'])
-          
+
           train.reset_index(drop = True, inplace = True)
           test.reset_index(drop = True, inplace = True)
           if col_names_hc:
@@ -503,7 +503,7 @@ if st.session_state['df_pp'] is not None:
           #   col_names_num.append(dep_var)
           for col in col_names_hc:
             col_names_num.append(col) # Kept due to use for VIF
-          # 
+          #
           # for col in col_names_num:
           #   if col == dep_var:
           #     target_train[col] = scaler.fit_transform(target_train[[col]]).flatten()
@@ -513,7 +513,7 @@ if st.session_state['df_pp'] is not None:
           #     feature_test[col] = scaler.transform(feature_test[[col]]).flatten()
           # if col_names_num:
           #   st.write('✅ — Z-score standardization complete!')
-          
+
           # Undersampling to handle imbalanced categorical target
           if is_object == True:
             undersampler = RandomUnderSampler(random_state = 42)
@@ -526,11 +526,11 @@ if st.session_state['df_pp'] is not None:
             st.write(f'⋯ {len(target_train_balanced)} rows left for target (train-balanced) set post-undersampling!')
           else:
             resampled = False
-          
+
           # Variance Inflation Factor (VIF) check for multicollinearity
           if dep_var in col_names_num and is_object == False:
             col_names_num.remove(dep_var)
-          
+
           if len(col_names_num) > 1:
             vif_diagnostic = True
             while vif_diagnostic == True:
@@ -556,7 +556,7 @@ if st.session_state['df_pp'] is not None:
               else:
                 vif_diagnostic = False
                 st.write('✅ — VIF multicollinearity diagnostic complete!')
-          
+
           # Column name string processing error fix (modeling bug fix)
           for col in feature_train.columns:
             if col.startswith('_') == False:
@@ -592,7 +592,7 @@ if st.session_state['df_pp'] is not None:
             target_test.rename(columns = {col: str(col_fix)}, inplace = True)
             if resampled == True:
               target_train_balanced.rename(columns = {col: str(col_fix)}, inplace = True)
-          
+
           # Duplicated column names fix (permanently halted due to unnecessity, 3 of 3 blocks)
           # cols = list(feature_train.columns)
           # unique_cols = set(cols)
@@ -607,7 +607,7 @@ if st.session_state['df_pp'] is not None:
           # feature_test.columns = cols
           # if resampled == True:
           #   feature_train_balanced.columns = cols
-          
+
           # Setting lowercase column names for better UI (pre-ML)
           feature_train.columns = feature_train.columns.str.lower()
           target_train.columns = target_train.columns.str.lower()
@@ -629,14 +629,14 @@ if st.session_state['df_pp'] is not None:
           if feature_test.columns.duplicated().any():
             feature_test = feature_test.loc[:, ~feature_test.columns.duplicated(keep = 'first')].copy()
             fin_dupe_drop = fin_dupe_drop + 1
-          
+
           if fin_dupe_drop > 0:
             st.warning('Pre-ML column duplicates identified and removed, feature interpretability may be at risk!', icon = '🚧')
-          if target_train.columns.iloc[0] in feature_train.columns:
+          if target_train.columns[0] in feature_train.columns:
             st.error("Pre-ML stopping, detected feature with the same name as the target variable!", icon = '🛑')
-          
+
           st.session_state['data_tracker'] = st.session_state['data_tracker'] + str(feature_train.columns.tolist()) # To be used for new data check for ML (column name change)
-          
+
           # ---------------------------------------------------------------------------------------------------------------------------------------
 
           # Executing machine learning algorithms and evaluation metrics
@@ -706,50 +706,50 @@ if st.session_state['df_pp'] is not None:
 
             # Regression report
             st.write('#### Modeling Report 📋')
-            
+
             st.markdown(tw.dedent(
                 f'''
-                ▼ Models Used  
+                ▼ Models Used
 
-                ├─ Linear Model - Linear Regression  
-                ├─ Tree-Based Model - Decision Tree Regressor (DT)  
-                ├─ Ensemble Model - Light Gradient Boosting Machine Regressor (LGBM)  
+                ├─ Linear Model - Linear Regression
+                ├─ Tree-Based Model - Decision Tree Regressor (DT)
+                ├─ Ensemble Model - Light Gradient Boosting Machine Regressor (LGBM)
 
-                ▼ Train/Test Sets Sample Size Validation  
-                
-                ├─ Feature (Train) Sample Size (n): {len(feature_train)}  
-                ├─ Target (Train) Sample Size (n): {len(target_train)}  
-                ├─ Feature (Test) Sample Size (n): {len(feature_test)}  
-                ├─ Target (Test) Sample Size (n): {len(target_test)}  
+                ▼ Train/Test Sets Sample Size Validation
 
-                ▼ Train/Test Sets Dimensionality Validation  
+                ├─ Feature (Train) Sample Size (n): {len(feature_train)}
+                ├─ Target (Train) Sample Size (n): {len(target_train)}
+                ├─ Feature (Test) Sample Size (n): {len(feature_test)}
+                ├─ Target (Test) Sample Size (n): {len(target_test)}
 
-                ├─ Feature (Train) Column Count: {len(feature_train.columns)}  
-                ├─ Target (Train) Column Count: {len(target_train.columns)}  
-                ├─ Feature (Test) Column Count: {len(feature_test.columns)}  
-                ├─ Target (Test) Column Count: {len(target_test.columns)}  
+                ▼ Train/Test Sets Dimensionality Validation
 
-                ▼ Model Fit Evaluation Metrics (Test Set Predictions)  
+                ├─ Feature (Train) Column Count: {len(feature_train.columns)}
+                ├─ Target (Train) Column Count: {len(target_train.columns)}
+                ├─ Feature (Test) Column Count: {len(feature_test.columns)}
+                ├─ Target (Test) Column Count: {len(target_test.columns)}
 
-                │ Coefficient of Determination (R2 Score - Unit: Percentage)  
-                │ ├─ Linear Regression - R2 Score: {r2_ln * 100:.2f}%  
-                │ ├─ DT Regressor - R2 Score: {r2_dt_reg * 100:.2f}%  
-                │ ├─ LGBM Regressor - R2 Score: {r2_lgbm_reg * 100:.2f}%  
+                ▼ Model Fit Evaluation Metrics (Test Set Predictions)
 
-                │ Root Mean Squared Error (RMSE - Unit: Per Target)  
-                │ ├─ Linear Regression - RMSE: {rmse_ln:.4f}  
-                │ ├─ DT Regressor - RMSE: {rmse_dt_reg:.4f}  
-                │ ├─ LGBM Regressor - RMSE: {rmse_lgbm_reg:.4f}  
+                │ Coefficient of Determination (R2 Score - Unit: Percentage)
+                │ ├─ Linear Regression - R2 Score: {r2_ln * 100:.2f}%
+                │ ├─ DT Regressor - R2 Score: {r2_dt_reg * 100:.2f}%
+                │ ├─ LGBM Regressor - R2 Score: {r2_lgbm_reg * 100:.2f}%
 
-                │ Mean Absolute Error (MAE - Unit: Per Target)  
-                │ ├─ Linear Regression - MAE: {mae_ln:.4f}  
-                │ ├─ DT Regressor - MAE: {mae_dt_reg:.4f}  
-                │ ├─ LGBM Regressor - MAE: {mae_lgbm_reg:.4f}  
+                │ Root Mean Squared Error (RMSE - Unit: Per Target)
+                │ ├─ Linear Regression - RMSE: {rmse_ln:.4f}
+                │ ├─ DT Regressor - RMSE: {rmse_dt_reg:.4f}
+                │ ├─ LGBM Regressor - RMSE: {rmse_lgbm_reg:.4f}
 
-                │ Mean Absolute Percentage Error (MAPE - Unit: Percentage)  
-                │ ├─ Linear Regression - MAPE: {mape_ln * 100:.2f}%  
-                │ ├─ DT Regressor - MAPE: {mape_dt_reg * 100:.2f}%  
-                │ ├─ LGBM Regressor - MAPE: {mape_lgbm_reg * 100:.2f}%  
+                │ Mean Absolute Error (MAE - Unit: Per Target)
+                │ ├─ Linear Regression - MAE: {mae_ln:.4f}
+                │ ├─ DT Regressor - MAE: {mae_dt_reg:.4f}
+                │ ├─ LGBM Regressor - MAE: {mae_lgbm_reg:.4f}
+
+                │ Mean Absolute Percentage Error (MAPE - Unit: Percentage)
+                │ ├─ Linear Regression - MAPE: {mape_ln * 100:.2f}%
+                │ ├─ DT Regressor - MAPE: {mape_dt_reg * 100:.2f}%
+                │ ├─ LGBM Regressor - MAPE: {mape_lgbm_reg * 100:.2f}%
                 '''
             ).strip())
 
@@ -770,11 +770,11 @@ if st.session_state['df_pp'] is not None:
 
               st.markdown(tw.dedent(
                   f'''
-                  ▼ Explainable Artificial Intelligence (XAI)  
+                  ▼ Explainable Artificial Intelligence (XAI)
 
-                  ├─ Best Model - {best_model_name[5:]}  
-                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {best_model_rmse:.4f}  
-                  ├─ Loss Function - Root Mean Squared Error (RMSE)  
+                  ├─ Best Model - {best_model_name[5:]}
+                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {best_model_rmse:.4f}
+                  ├─ Loss Function - Root Mean Squared Error (RMSE)
                   '''
               ).strip())
 
@@ -806,20 +806,20 @@ if st.session_state['df_pp'] is not None:
                                                                                     hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Value Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
-              
+
               if not target_encoded_vars.empty:
                 with st.spinner('Creating target encoding interpretation table(s)...', show_time = True):
 
                   st.markdown(tw.dedent(
                       """
-                      ▼ Target Encoded Variable(s) Interpretation  
+                      ▼ Target Encoded Variable(s) Interpretation
 
-                      ├─ Encoded Unit - Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)  
+                      ├─ Encoded Unit - Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
 
-                      ▼ Interpretation Table(s):  
+                      ▼ Interpretation Table(s):
                       """
                   ).strip())
-                  
+
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
@@ -842,11 +842,11 @@ if st.session_state['df_pp'] is not None:
 
               st.markdown(tw.dedent(
                   f"""
-                  ▼ Explainable Artificial Intelligence (XAI)  
+                  ▼ Explainable Artificial Intelligence (XAI)
 
-                  ├─ Best Model - {st.session_state['best_model_name'][5:]}  
-                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {st.session_state['best_model_rmse']:.4f}  
-                  ├─ Loss Function - Root Mean Squared Error (RMSE)  
+                  ├─ Best Model - {st.session_state['best_model_name'][5:]}
+                  ├─ Metric for Determination of Best Model - Root Mean Squared Error (RMSE) at {st.session_state['best_model_rmse']:.4f}
+                  ├─ Loss Function - Root Mean Squared Error (RMSE)
                   """
               ).strip())
 
@@ -854,25 +854,25 @@ if st.session_state['df_pp'] is not None:
                 with st.spinner('Plotting permutation feature importance...', show_time = True):
                   st.write('▼ Permutation Feature Importance (PFI):')
                   st.plotly_chart(st.session_state['pfi_fig_ss'], width = 'stretch', config = {'displayModeBar': False})
-              
+
               with st.spinner('Plotting partial dependence plots...', show_time = True):
                 st.write('▼ Partial Dependence Plots (PDPs):')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(st.session_state['pdp_fig_ss'], width = 'stretch', config = {'displayModeBar': False})
-              
+
               if not target_encoded_vars.empty:
                 with st.spinner('Creating target encoding interpretation table(s)...', show_time = True):
 
                   st.markdown(tw.dedent(
                       """
-                      ▼ Target Encoded Variable(s) Interpretation  
+                      ▼ Target Encoded Variable(s) Interpretation
 
-                      ├─ Encoded Unit - Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)  
+                      ├─ Encoded Unit - Average Value of Target per Category (Min/Max 2-Fold Cross-Validation)
 
-                      ▼ Interpretation Table(s):  
+                      ▼ Interpretation Table(s):
                       """
                   ).strip())
-                  
+
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
@@ -888,7 +888,7 @@ if st.session_state['df_pp'] is not None:
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
-          
+
           elif is_object == True: # Classification modeling
 
             # Data tracker check initialization
@@ -975,32 +975,32 @@ if st.session_state['df_pp'] is not None:
 
             # Classification report
             st.write('#### Modeling Report 📋')
-            
+
             st.markdown(tw.dedent(
                 f'''
-                ▼ Models Used  
-                
-                ├─ Linear Model - Logistic Regression  
-                ├─ Tree-Based Model - Decision Tree Classifier (DT)  
-                ├─ Ensemble Model - Light Gradient Boosting Machine Classifier (LGBM)  
+                ▼ Models Used
 
-                ▼ Train/Test Sets Sample Size Validation  
+                ├─ Linear Model - Logistic Regression
+                ├─ Tree-Based Model - Decision Tree Classifier (DT)
+                ├─ Ensemble Model - Light Gradient Boosting Machine Classifier (LGBM)
 
-                ├─ Feature (Train) Sample Size (n): {len(feature_train)}  
-                ├─ Target (Train) Sample Size (n): {len(target_train)}  
-                ├─ Feature (Train-Balanced) Sample Size (n): {len(feature_train_balanced)}  
-                ├─ Target (Train-Balanced) Sample Size (n): {len(target_train_balanced)}  
-                ├─ Feature (Test) Sample Size (n): {len(feature_test)}  
-                ├─ Target (Test) Sample Size (n): {len(target_test)}  
+                ▼ Train/Test Sets Sample Size Validation
 
-                ▼ Train/Test Sets Dimensionality Validation  
+                ├─ Feature (Train) Sample Size (n): {len(feature_train)}
+                ├─ Target (Train) Sample Size (n): {len(target_train)}
+                ├─ Feature (Train-Balanced) Sample Size (n): {len(feature_train_balanced)}
+                ├─ Target (Train-Balanced) Sample Size (n): {len(target_train_balanced)}
+                ├─ Feature (Test) Sample Size (n): {len(feature_test)}
+                ├─ Target (Test) Sample Size (n): {len(target_test)}
 
-                ├─ Feature (Train) Column Count: {len(feature_train.columns)}  
-                ├─ Target (Train) Column Count: {len(target_train.columns)}  
-                ├─ Feature (Train-Balanced) Column Count: {len(feature_train_balanced.columns)}  
-                ├─ Target (Train-Balanced) Column Count: {len(target_train_balanced.columns)}  
-                ├─ Feature (Test) Column Count: {len(feature_test.columns)}  
-                ├─ Target (Test) Column Count: {len(target_test.columns)}  
+                ▼ Train/Test Sets Dimensionality Validation
+
+                ├─ Feature (Train) Column Count: {len(feature_train.columns)}
+                ├─ Target (Train) Column Count: {len(target_train.columns)}
+                ├─ Feature (Train-Balanced) Column Count: {len(feature_train_balanced.columns)}
+                ├─ Target (Train-Balanced) Column Count: {len(target_train_balanced.columns)}
+                ├─ Feature (Test) Column Count: {len(feature_test.columns)}
+                ├─ Target (Test) Column Count: {len(target_test.columns)}
                 '''
             ).strip())
 
@@ -1020,7 +1020,7 @@ if st.session_state['df_pp'] is not None:
 
             # Classification best model explainer (dalex) and target encoded variables interpretation
             if st.session_state['data_tracker_check'] != st.session_state['data_tracker']:
-              
+
               model_names = ['XAI: Logistic Regression', 'XAI: Logistic Regression (Undersampled)',
                             'XAI: DT Classifier', 'XAI: DT Classifier (Undersampled)',
                             'XAI: LGBM Classifier', 'XAI: LGBM Classifier (Undersampled)']
@@ -1038,11 +1038,11 @@ if st.session_state['df_pp'] is not None:
 
               st.markdown(tw.dedent(
                   f'''
-                  ▼ Explainable Artificial Intelligence (XAI)  
+                  ▼ Explainable Artificial Intelligence (XAI)
 
-                  ├─ Best Model - {best_model_name[5:]}  
-                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {best_model_f1 * 100:.2f}%  
-                  ├─ Loss Function - Area Above the Curve (1-AUC)  
+                  ├─ Best Model - {best_model_name[5:]}
+                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {best_model_f1 * 100:.2f}%
+                  ├─ Loss Function - Area Above the Curve (1-AUC)
                   '''
               ).strip())
 
@@ -1074,20 +1074,20 @@ if st.session_state['df_pp'] is not None:
                                                                                     hoverlabel = dict(bgcolor = '#8dc5cc', align = 'left')).update_traces(hovertemplate = '⤷ Feature Value: <b>%{x:.4f}</b>' + '<br>⤷ Target Class 1 Proba. Pred.: <b>%{y:.4f}</b>' + '<extra></extra>')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(pdp_fig_ss, width = 'stretch', config = {'displayModeBar': False})
-              
+
               if not target_encoded_vars.empty:
                 with st.spinner('Creating target encoding interpretation table(s)...', show_time = True):
 
                   st.markdown(tw.dedent(
                       """
-                      ▼ Target Encoded Variable(s) Interpretation  
+                      ▼ Target Encoded Variable(s) Interpretation
 
-                      ├─ Encoded Unit - Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)  
+                      ├─ Encoded Unit - Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
 
-                      ▼ Interpretation Table(s):  
+                      ▼ Interpretation Table(s):
                       """
                   ).strip())
-                  
+
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
@@ -1103,18 +1103,18 @@ if st.session_state['df_pp'] is not None:
                                                    'min': st.column_config.Column('Encoded Value Min.', width = 100),
                                                    'max': st.column_config.Column('Encoded Value Max.', width = 100),
                                                    'mean': st.column_config.Column('Encoded Value Mean', width = 100)})
-              
+
               st.session_state['data_tracker_check'] = st.session_state['data_tracker'] # Data tracker check update
-            
+
             elif st.session_state['data_tracker_check'] == st.session_state['data_tracker']:
 
               st.markdown(tw.dedent(
                   f"""
-                  ▼ Explainable Artificial Intelligence (XAI)  
+                  ▼ Explainable Artificial Intelligence (XAI)
 
-                  ├─ Best Model - {st.session_state['best_model_name'][5:]}  
-                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {st.session_state['best_model_f1'] * 100:.2f}%  
-                  ├─ Loss Function - Area Above the Curve (1-AUC)  
+                  ├─ Best Model - {st.session_state['best_model_name'][5:]}
+                  ├─ Metric for Determination of Best Model - Class 1 F1 Score at {st.session_state['best_model_f1'] * 100:.2f}%
+                  ├─ Loss Function - Area Above the Curve (1-AUC)
                   """
               ).strip())
 
@@ -1127,20 +1127,20 @@ if st.session_state['df_pp'] is not None:
                 st.write('▼ Partial Dependence Plots (PDPs):')
                 with st.container(height = 500 if len(feature_train.columns) >= 3 else 385 if len(feature_train.columns) == 2 else 435, border = True):
                   st.plotly_chart(st.session_state['pdp_fig_ss'], width = 'stretch', config = {'displayModeBar': False})
-              
+
               if not target_encoded_vars.empty:
                 with st.spinner('Creating target encoding interpretation table(s)...', show_time = True):
 
                   st.markdown(tw.dedent(
                       """
-                      ▼ Target Encoded Variable(s) Interpretation  
+                      ▼ Target Encoded Variable(s) Interpretation
 
-                      ├─ Encoded Unit - Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)  
+                      ├─ Encoded Unit - Probability of Class 1 Target per Category (Min/Max 2-Fold Cross-Validation)
 
-                      ▼ Interpretation Table(s):  
+                      ▼ Interpretation Table(s):
                       """
                   ).strip())
-                  
+
                   interpretation_tables_list = []
                   for col in target_encoded_vars:
                     if col.endswith('_Pre_Enc'):
@@ -1163,7 +1163,7 @@ if st.session_state['df_pp'] is not None:
           st.divider()
           st.header('⸻ Model Deployment 🎯')
           st.info('Generate forecasts with new data based on the previously best fitted model!', icon = 'ℹ️')
-          
+
           prediction_list = []
           with st.form('best_model_deployment_form', height = 270):
             st.write(tw.dedent(
@@ -1190,7 +1190,7 @@ if st.session_state['df_pp'] is not None:
                 prediction_list.append(cat_val)
             submitted_3 = st.form_submit_button('Confirm new data input')
             st.html('<div style = "margin-bottom: 0.5px;"></div>')
-          
+
           if submitted_3 == True:
             st.session_state['submitted_3_ref'] = True
 
@@ -1201,24 +1201,24 @@ if st.session_state['df_pp'] is not None:
               st.error('Detected non-numeric string as input for new prediction!', icon = '🛑')
             else:
               st.write('✅ — New prediction input data saved!') # Guarded execution block (layer 4)
-          
+
               new_prediction = st.session_state['best_model_fit'].predict([prediction_list])
               st.write('✅ — Best fitted model new prediction complete!')
 
               if is_object == False:
-                
+
                 st.markdown(tw.dedent(
                     f"""
-                    ▼ Best Regression Model Prediction  
+                    ▼ Best Regression Model Prediction
 
-                    ├─ Best Regression Model: {st.session_state['best_model_name'][5:]}  
-                    ├─ Best Model Test Set R2 Score: {st.session_state['best_model_r2'] * 100:.2f}%  
-                    ├─ Best Model Target Value Prediction: {float(new_prediction.flatten()[0]):.4f}  
+                    ├─ Best Regression Model: {st.session_state['best_model_name'][5:]}
+                    ├─ Best Model Test Set R2 Score: {st.session_state['best_model_r2'] * 100:.2f}%
+                    ├─ Best Model Target Value Prediction: {float(new_prediction.flatten()[0]):.4f}
                     """
                 ))
-              
+
               elif is_object == True:
-                
+
                 pred_scalar = int(new_prediction.flatten()[0])
                 probability = st.session_state['best_model_fit'].predict_proba([prediction_list])[0]
                 probability_disp = probability[1].item()
@@ -1226,12 +1226,12 @@ if st.session_state['df_pp'] is not None:
 
                 st.markdown(tw.dedent(
                     f"""
-                    ▼ Best Classification Model Prediction  
+                    ▼ Best Classification Model Prediction
 
-                    ├─ Best Classification Model: {st.session_state['best_model_name'][5:]}  
-                    ├─ Best Model Test Set Class 1 F1 Score: {st.session_state['best_model_f1'] * 100:.2f}%  
-                    ├─ Best Model Class 1 Probability: {probability_disp * 100:.2f}%  
-                    ├─ Best Model Target Class Prediction: {class_outcome}  
+                    ├─ Best Classification Model: {st.session_state['best_model_name'][5:]}
+                    ├─ Best Model Test Set Class 1 F1 Score: {st.session_state['best_model_f1'] * 100:.2f}%
+                    ├─ Best Model Class 1 Probability: {probability_disp * 100:.2f}%
+                    ├─ Best Model Target Class Prediction: {class_outcome}
                     """
                 ).strip())
 
@@ -1239,4 +1239,3 @@ if st.session_state['df_pp'] is not None:
 
 else:
   st.subheader('No file upload detected 💤')
-  
